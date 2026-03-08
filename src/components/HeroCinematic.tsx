@@ -38,18 +38,53 @@ export default function HeroCinematic() {
 
     return (
         <section ref={container} className="relative h-[110vh] flex items-center justify-center overflow-hidden bg-teal-deep">
-            {/* Background Image with Filter */}
-            <div className="absolute inset-0 z-0">
-                <div className="hero-bg relative w-full h-full">
-                    <Image
-                        src="https://images.unsplash.com/photo-1512438248406-3026367807ec?q=80&w=2070&auto=format&fit=crop"
-                        alt="Péguy Casteloot - Sérénité"
-                        fill
-                        className="object-cover grayscale brightness-50"
-                        priority
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-b from-teal-deep/20 via-transparent to-teal-deep" />
-                </div>
+            {/* Animated Ambient Background */}
+            <div className="absolute inset-0 z-0 overflow-hidden bg-[var(--theme-bg)]">
+                <motion.div
+                    className="absolute -top-[20%] -left-[10%] w-[70vw] h-[70vw] rounded-full mix-blend-screen filter blur-[100px] opacity-40 pointer-events-none"
+                    style={{ background: 'radial-gradient(circle, var(--theme-accent) 0%, transparent 70%)' }}
+                    animate={{
+                        x: [0, 80, 0],
+                        y: [0, 60, 0],
+                        scale: [1, 1.15, 1],
+                    }}
+                    transition={{
+                        duration: 18,
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                    }}
+                />
+                <motion.div
+                    className="absolute top-[30%] -right-[10%] w-[60vw] h-[60vw] rounded-full mix-blend-screen filter blur-[120px] opacity-30 pointer-events-none"
+                    style={{ background: 'radial-gradient(circle, var(--theme-text) 0%, transparent 70%)' }}
+                    animate={{
+                        x: [0, -100, 0],
+                        y: [0, -40, 0],
+                        scale: [1, 1.25, 1],
+                    }}
+                    transition={{
+                        duration: 22,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: 2
+                    }}
+                />
+                <motion.div
+                    className="absolute -bottom-[20%] left-[20%] w-[80vw] h-[80vw] rounded-full mix-blend-screen filter blur-[130px] opacity-30 pointer-events-none"
+                    style={{ background: 'radial-gradient(circle, var(--theme-accent-alt) 0%, transparent 70%)' }}
+                    animate={{
+                        x: [0, 60, 0],
+                        y: [0, -90, 0],
+                        scale: [1, 1.1, 1],
+                    }}
+                    transition={{
+                        duration: 25,
+                        repeat: Infinity,
+                        ease: "easeInOut",
+                        delay: 5
+                    }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[var(--theme-bg)]/40 to-[var(--theme-bg)] pointer-events-none" />
             </div>
 
             {/* Svg Drawing Effects over the photo */}

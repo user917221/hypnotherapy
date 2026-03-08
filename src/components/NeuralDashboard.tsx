@@ -112,7 +112,7 @@ export default function NeuralDashboard() {
                                 src="/brain.png"
                                 alt="Cerveau humain - zones actives sous hypnose"
                                 fill
-                                className="object-contain drop-shadow-2xl mix-blend-screen"
+                                className="object-contain drop-shadow-2xl brain-blend"
                                 priority
                             />
                         </div>
