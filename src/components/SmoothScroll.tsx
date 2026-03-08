@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, ReactNode } from 'react';
+// @ts-ignore - Vercel will install this during build
 import Lenis from 'lenis';
 
 export default function SmoothScroll({ children }: { children: ReactNode }) {
