@@ -26,6 +26,17 @@ export default function InscriptionPage() {
         <main className="min-h-screen flex items-start justify-center px-6 py-20 relative overflow-hidden text-[var(--theme-text)]">
             <div className="absolute top-1/4 right-1/3 w-[700px] h-[700px] bg-[var(--theme-accent)]/8 rounded-full blur-[130px] pointer-events-none" />
 
+            <style jsx global>{`
+                input:-webkit-autofill,
+                input:-webkit-autofill:hover, 
+                input:-webkit-autofill:focus {
+                    -webkit-text-fill-color: var(--theme-text);
+                    -webkit-box-shadow: 0 0 0px 1000px transparent inset;
+                    transition: background-color 5000s ease-in-out 0s;
+                    background-color: transparent !important;
+                }
+            `}</style>
+
             <div className="w-full max-w-4xl grid grid-cols-1 lg:grid-cols-2 gap-12 items-center relative z-10 mt-8">
 
                 {/* Left — Benefits */}
@@ -107,7 +118,7 @@ export default function InscriptionPage() {
                             <div className="relative">
                                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--theme-text)]/20" />
                                 <input type="email" placeholder="vous@email.com" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })}
-                                    className="w-full pl-11 pr-4 py-4 rounded-2xl bg-[#0a0a0a]/40 border border-[var(--theme-text)]/5 text-[var(--theme-text)] placeholder:text-[var(--theme-text)]/20 font-sans focus:outline-none focus:border-[var(--theme-accent)]/20 focus:bg-[#0a0a0a]/60 transition-all" />
+                                    className="w-full pl-11 pr-4 py-4 rounded-2xl bg-[#0a0a0a]/40 border border-[var(--theme-text)]/5 text-[var(--theme-text)] placeholder:text-[var(--theme-text)]/20 font-sans focus:outline-none focus:border-[var(--theme-accent)]/20 focus:bg-[#0a0a0a]/60 transition-all appearance-none" />
                             </div>
                         </div>
 
@@ -116,7 +127,7 @@ export default function InscriptionPage() {
                             <div className="relative">
                                 <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--theme-text)]/20" />
                                 <input type={showPwd ? "text" : "password"} placeholder="Min. 8 caractères" required value={form.password} onChange={e => setForm({ ...form, password: e.target.value })}
-                                    className="w-full pl-11 pr-12 py-4 rounded-2xl bg-[#0a0a0a]/40 border border-[var(--theme-text)]/5 text-[var(--theme-text)] placeholder:text-[var(--theme-text)]/20 font-sans focus:outline-none focus:border-[var(--theme-accent)]/20 focus:bg-[#0a0a0a]/60 transition-all" />
+                                    className="w-full pl-11 pr-12 py-4 rounded-2xl bg-[#0a0a0a]/40 border border-[var(--theme-text)]/5 text-[var(--theme-text)] placeholder:text-[var(--theme-text)]/20 font-sans focus:outline-none focus:border-[var(--theme-accent)]/20 focus:bg-[#0a0a0a]/60 transition-all appearance-none" />
                                 <button type="button" onClick={() => setShowPwd(!showPwd)}
                                     className="absolute right-4 top-1/2 -translate-y-1/2 text-[var(--theme-text)]/20 hover:text-[var(--theme-text)]/40 transition-colors">
                                     {showPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}

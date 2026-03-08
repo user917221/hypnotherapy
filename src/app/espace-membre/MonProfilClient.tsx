@@ -135,19 +135,20 @@ export default function MonProfilClient() {
     if (!isMounted) return null;
 
     return (
-        <main className="min-h-screen bg-[var(--theme-bg)] text-[var(--theme-text)] pt-20 pb-24 relative overflow-hidden" suppressHydrationWarning>
+        <main className="min-h-screen bg-[var(--theme-bg)] text-[var(--theme-text)] pt-28 pb-24 relative overflow-hidden" suppressHydrationWarning>
             {/* Ambient */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-[var(--theme-accent)]/5 rounded-full blur-[120px] pointer-events-none" />
 
             <div className="max-w-7xl mx-auto px-6 relative z-10">
                 {/* Header Profil */}
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-8 mb-8 pb-8 border-b border-[var(--theme-accent)]/10">
+                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-12 mb-12 pb-12 border-b border-[var(--theme-accent)]/10">
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
+                        className="max-w-2xl"
                     >
-                        <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-[var(--theme-accent)]/60 mb-2 block">Tableau de Bord Personnel</span>
-                        <h1 className="font-serif-display text-5xl md:text-7xl tracking-tighter">
+                        <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-[var(--theme-accent)]/60 mb-3 block">Tableau de Bord Personnel</span>
+                        <h1 className="font-serif-display text-6xl md:text-8xl tracking-tighter leading-none">
                             Bonjour, <span className="italic text-[var(--theme-accent)]">{(session?.user as any)?.prenom || session?.user?.name?.split(' ')[0] || "Ami(e)"}</span>
                         </h1>
                     </motion.div>
@@ -382,12 +383,14 @@ export default function MonProfilClient() {
                                             <h3 className="font-serif-display text-3xl">Première séance effectuée</h3>
                                             <p className="text-[var(--theme-text)]/40 text-sm mt-1">Le 12 Mars 2026 • Cabinet de Lannion</p>
                                         </div>
-                                        <MagneticButton
+                                        <motion.button
+                                            whileHover={{ scale: 1.02 }}
+                                            whileTap={{ scale: 0.98 }}
                                             onClick={() => window.open('https://peguycasteloot.fr', '_blank')}
-                                            className="px-6 py-3 bg-[var(--theme-text)]/5 border border-[var(--theme-text)]/10 rounded-xl text-[10px] uppercase font-black tracking-widest"
+                                            className="px-8 py-4 bg-[var(--theme-text)]/5 border border-[var(--theme-text)]/10 rounded-2xl text-[11px] uppercase font-black tracking-widest hover:bg-[var(--theme-accent)] hover:text-[var(--theme-bg)] hover:border-[var(--theme-accent)] transition-all"
                                         >
                                             Voir le compte-rendu
-                                        </MagneticButton>
+                                        </motion.button>
                                     </div>
 
                                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

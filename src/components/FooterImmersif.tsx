@@ -102,7 +102,7 @@ export default function FooterImmersif() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1.2, ease: "easeOut" }}
                 viewport={{ once: true, margin: "-100px" }}
-                className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-12 lg:gap-x-20 gap-y-16"
+                className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-32 lg:gap-x-64 gap-y-16"
             >
                 {/* Contact Column */}
                 <div className="order-2 lg:order-1">
