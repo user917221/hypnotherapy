@@ -85,34 +85,32 @@ export default function NeuralDashboard() {
     const active = brainZones[activeZone];
 
     return (
-        <section className="py-32 px-6 md:px-12 max-w-7xl mx-auto w-full border-t border-[var(--theme-text)]/5">
+        <section className="py-20 md:py-32 px-4 md:px-12 max-w-7xl mx-auto w-full border-t border-[var(--theme-text)]/5 overflow-hidden">
 
             {/* Header */}
-            <div className="mb-16 flex flex-col md:flex-row justify-between items-end gap-6">
+            <div className="mb-10 md:mb-16 flex flex-col md:flex-row justify-between md:items-end gap-4 md:gap-6">
                 <div>
-                    <span className="text-[10px] uppercase tracking-[0.3em] font-bold text-[var(--theme-accent)] font-sans block mb-3">Neurologie de la Transe</span>
-                    <h2 className="font-serif-display text-5xl md:text-7xl tracking-tighter leading-[0.9] text-[var(--theme-text)]">
+                    <span className="text-[9px] md:text-[10px] uppercase tracking-[0.3em] font-bold text-[var(--theme-accent)] font-sans block mb-2 md:mb-3">Neurologie de la Transe</span>
+                    <h2 className="font-serif-display text-4xl sm:text-5xl md:text-7xl tracking-tighter leading-[0.9] text-[var(--theme-text)]">
                         Votre cerveau <br /><span className="italic text-[var(--theme-text)]/50">sous hypnose.</span>
                     </h2>
                 </div>
-                <p className="font-sans text-[var(--theme-text)]/40 max-w-sm text-lg font-light">
+                <p className="font-sans text-[var(--theme-text)]/40 max-w-sm text-base md:text-lg font-light">
                     L'hypnose n'est pas magique. C'est de la neurologie appliquée — précise, reproductible, mesurable.
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 xl:grid-cols-2 gap-12 xl:gap-20 items-center">
+            <div className="grid grid-cols-1 xl:grid-cols-2 gap-10 xl:gap-20 items-center">
 
                 {/* LEFT — Real Brain Image with zone overlays */}
-                <div className="flex flex-col items-center gap-8">
-                    <div className="relative w-full max-w-[520px] mx-auto aspect-square">
-
-                        {/* Brain image — mix-blend-screen strips the black background */}
-                        <div className="relative w-full h-full">
+                <div className="flex flex-col items-center gap-6 md:gap-8">
+                    <div className="relative w-[300px] h-[300px] md:w-full md:max-w-[520px] md:h-auto md:aspect-square mx-auto">
+                        <div className="relative w-full h-full rounded-full brain-blend-wrapper">
                             <Image
                                 src="/brain.png"
                                 alt="Cerveau humain - zones actives sous hypnose"
                                 fill
-                                className="object-contain drop-shadow-2xl brain-blend"
+                                className="object-contain brain-filter"
                                 priority
                             />
                         </div>
@@ -128,7 +126,6 @@ export default function NeuralDashboard() {
                                     style={{ left: zone.left, top: zone.top }}
                                     aria-label={zone.label}
                                 >
-                                    {/* Outer pulse rings */}
                                     {isActive && (
                                         <>
                                             <motion.div
@@ -150,11 +147,11 @@ export default function NeuralDashboard() {
                                     <motion.div
                                         className="relative z-10 rounded-full border-2 shadow-lg"
                                         style={{
-                                            width: isActive ? 16 : 10,
-                                            height: isActive ? 16 : 10,
+                                            width: isActive ? 14 : 8,
+                                            height: isActive ? 14 : 8,
                                             backgroundColor: zone.color,
                                             borderColor: zone.color,
-                                            boxShadow: isActive ? `0 0 20px 6px ${zone.color}60` : "none",
+                                            boxShadow: isActive ? `0 0 16px 4px ${zone.color}60` : "none",
                                             transition: "all 0.5s ease",
                                         }}
                                         animate={isActive ? { scale: [1, 1.2, 1] } : { scale: 1 }}
@@ -166,13 +163,13 @@ export default function NeuralDashboard() {
                                         <motion.div
                                             initial={{ opacity: 0, y: 4 }}
                                             animate={{ opacity: 1, y: 0 }}
-                                            className="absolute bottom-full mb-3 left-1/2 -translate-x-1/2 whitespace-nowrap"
+                                            className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 whitespace-nowrap z-20"
                                         >
-                                            <span className="block px-3 py-1.5 rounded-full text-[10px] font-bold tracking-wide font-sans shadow-xl"
+                                            <span className="block px-2.5 py-1 rounded-full text-[9px] md:text-[10px] font-bold tracking-wide font-sans shadow-xl"
                                                 style={{ backgroundColor: zone.color, color: "var(--theme-bg)" }}>
                                                 {zone.label}
                                             </span>
-                                            <span className="block w-px h-3 mx-auto" style={{ backgroundColor: zone.color }} />
+                                            <span className="block w-px h-2 mx-auto" style={{ backgroundColor: zone.color }} />
                                         </motion.div>
                                     )}
                                 </button>
@@ -181,12 +178,12 @@ export default function NeuralDashboard() {
                     </div>
 
                     {/* Zone selector pills */}
-                    <div className="flex flex-wrap gap-2 justify-center max-w-sm">
+                    <div className="flex flex-wrap gap-1.5 md:gap-2 justify-center max-w-sm px-2">
                         {brainZones.map((zone, i) => (
                             <button
                                 key={zone.id}
                                 onClick={() => setActiveZone(i)}
-                                className={`px-3 py-1.5 rounded-full text-[11px] font-medium font-sans border transition-all duration-400 ${i === activeZone
+                                className={`px-2.5 py-1 md:px-3 md:py-1.5 rounded-full text-[10px] md:text-[11px] font-medium font-sans border transition-all duration-400 ${i === activeZone
                                     ? "bg-[var(--theme-accent)]/15 border-[var(--theme-accent)]/50 text-[var(--theme-text)]"
                                     : "border-[var(--theme-text)]/10 text-[var(--theme-text)]/30 hover:text-[var(--theme-text)]/60"
                                     }`}
@@ -198,7 +195,7 @@ export default function NeuralDashboard() {
                 </div>
 
                 {/* RIGHT — Info Panel */}
-                <div className="flex flex-col gap-6">
+                <div className="flex flex-col gap-4 md:gap-6">
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={activeZone}
@@ -206,41 +203,41 @@ export default function NeuralDashboard() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -12 }}
                             transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                            className="glass-ovni p-8 md:p-10 rounded-[2.5rem] relative overflow-hidden"
+                            className="glass-ovni p-6 md:p-10 rounded-3xl md:rounded-[2.5rem] relative overflow-hidden"
                         >
-                            <div className="absolute -top-20 -right-20 w-64 h-64 rounded-full blur-[80px] pointer-events-none"
-                                style={{ background: active.color, opacity: 0.08 }} />
+                            <div className="absolute -top-10 -right-10 md:-top-20 md:-right-20 w-40 h-40 md:w-64 md:h-64 rounded-full blur-[60px] md:blur-[80px] pointer-events-none"
+                                style={{ background: active.color, opacity: 0.1 }} />
 
-                            <div className="flex items-start gap-4 mb-8">
-                                <div className="w-10 h-10 rounded-full flex items-center justify-center shrink-0 mt-1"
+                            <div className="flex items-start gap-3 md:gap-4 mb-4 md:mb-8">
+                                <div className="w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center shrink-0 mt-1"
                                     style={{ background: active.color, opacity: 0.15 }}>
                                     <motion.div
-                                        className="w-2.5 h-2.5 rounded-full"
+                                        className="w-2 h-2 md:w-2.5 md:h-2.5 rounded-full"
                                         style={{ background: active.color, opacity: 1 }}
                                         animate={{ scale: [1, 1.3, 1] }}
                                         transition={{ duration: 1.5, repeat: Infinity }}
                                     />
                                 </div>
-                                <div>
-                                    <p className="text-[10px] uppercase tracking-[0.25em] font-bold font-sans mb-1" style={{ color: active.color }}>Zone Active</p>
-                                    <h3 className="font-serif-display text-2xl text-[var(--theme-text)]">{active.label}</h3>
-                                    <p className="font-sans text-sm text-[var(--theme-text)]/40">{active.sublabel}</p>
+                                <div className="flex-1">
+                                    <p className="text-[9px] md:text-[10px] uppercase tracking-[0.25em] font-bold font-sans mb-1" style={{ color: active.color }}>Zone Active</p>
+                                    <h3 className="font-serif-display text-xl md:text-2xl text-[var(--theme-text)]">{active.label}</h3>
+                                    <p className="font-sans text-xs md:text-sm text-[var(--theme-text)]/40">{active.sublabel}</p>
                                 </div>
                             </div>
 
-                            <p className="font-serif-display text-3xl md:text-[2rem] text-[var(--theme-text)] leading-tight mb-6 italic">
+                            <p className="font-serif-display text-2xl sm:text-3xl md:text-[2rem] text-[var(--theme-text)] leading-tight mb-4 md:mb-6 italic">
                                 "{active.description}"
                             </p>
 
-                            <p className="font-sans text-base font-light leading-relaxed text-[var(--theme-text)]/65">
+                            <p className="font-sans text-sm md:text-base font-light leading-relaxed text-[var(--theme-text)]/65">
                                 {active.fact}
                             </p>
 
                             {/* Progress bar */}
-                            <div className="mt-10">
-                                <div className="flex justify-between text-[10px] font-sans font-bold uppercase tracking-widest text-[var(--theme-text)]/25 mb-2">
-                                    <span>Zone {activeZone + 1} / {brainZones.length}</span>
-                                    <span>Cycle suivant…</span>
+                            <div className="mt-6 md:mt-10">
+                                <div className="flex justify-between text-[9px] md:text-[10px] font-sans font-bold uppercase tracking-[0.15em] md:tracking-widest text-[var(--theme-text)]/30 mb-2">
+                                    <span>{activeZone + 1} / {brainZones.length}</span>
+                                    <span>Suivant</span>
                                 </div>
                                 <div className="h-px w-full bg-[var(--theme-text)]/10 rounded-full overflow-hidden">
                                     <div
@@ -253,16 +250,16 @@ export default function NeuralDashboard() {
                     </AnimatePresence>
 
                     {/* Stats row */}
-                    <div className="grid grid-cols-3 gap-4">
+                    <div className="grid grid-cols-3 gap-2 md:gap-4 mt-2">
                         {[
                             { value: "−40%", label: "Cortex préfrontal", sub: "activité réduite" },
                             { value: "3×", label: "Ondes Alpha", sub: "amplifiées" },
                             { value: "1ère", label: "Séance", sub: "effets mesurés" },
                         ].map((stat, i) => (
-                            <div key={i} className="glass-ovni rounded-2xl p-4 text-center">
-                                <p className="font-serif-display text-3xl text-[var(--theme-accent)] mb-1">{stat.value}</p>
-                                <p className="font-sans text-[11px] font-bold text-[var(--theme-text)]/60 leading-tight">{stat.label}</p>
-                                <p className="font-sans text-[10px] text-[var(--theme-text)]/30">{stat.sub}</p>
+                            <div key={i} className="glass-ovni rounded-xl md:rounded-2xl p-3 md:p-4 text-center">
+                                <p className="font-serif-display text-xl md:text-3xl text-[var(--theme-accent)] mb-0.5 md:mb-1">{stat.value}</p>
+                                <p className="font-sans text-[9px] md:text-[11px] font-bold text-[var(--theme-text)]/70 leading-tight mb-0.5">{stat.label}</p>
+                                <p className="font-sans text-[8px] md:text-[10px] text-[var(--theme-text)]/40">{stat.sub}</p>
                             </div>
                         ))}
                     </div>

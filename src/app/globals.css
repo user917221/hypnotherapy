@@ -77,13 +77,24 @@ body {
 }
 
 /* Fix invisibilite cerveau (image mix-blend) sur theme blanc */
-.brain-blend {
+/* Separation wrapper/image pour contourner bug WebKit iOS (Safari) */
+.brain-blend-wrapper {
   mix-blend-mode: screen;
+  transform: translateZ(0);
+  /* force hardware accel */
 }
 
-.theme-soleil .brain-blend {
+.theme-soleil .brain-blend-wrapper {
   mix-blend-mode: multiply;
-  filter: invert(1) hue-rotate(180deg) contrast(1.2);
+}
+
+.brain-filter {
+  /* default: no filter */
+  will-change: filter;
+}
+
+.theme-soleil .brain-filter {
+  filter: invert(1) grayscale(1) contrast(1.5);
 }
 
 @keyframes marquee {
