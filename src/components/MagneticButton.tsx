@@ -10,6 +10,7 @@ interface MagneticButtonProps {
     type?: "button" | "submit" | "reset";
     href?: string;
     fullWidth?: boolean;
+    disabled?: boolean;
 }
 
 export default function MagneticButton({
@@ -19,6 +20,7 @@ export default function MagneticButton({
     type = "button",
     href,
     fullWidth,
+    disabled = false,
 }: MagneticButtonProps) {
     const ref = useRef<HTMLDivElement>(null);
     const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -51,6 +53,7 @@ export default function MagneticButton({
                 <button
                     type={type}
                     onClick={onClick}
+                    disabled={disabled}
                     className={innerClass}
                     style={fullWidth ? { width: "100%" } : {}}
                 >

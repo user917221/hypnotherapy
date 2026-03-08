@@ -80,14 +80,14 @@ function SocialIcon({ icon, href, label, themeColor, staticColor }: {
     );
 }
 
-function ContactItem({ icon, text, href }: { icon: React.ReactNode; text: string; href?: string }) {
+function ContactItem({ icon, text, href, noWrap }: { icon: React.ReactNode; text: string; href?: string; noWrap?: boolean }) {
     const content = (
         <div className="flex gap-3 items-start group">
             <div className="text-[var(--theme-accent)]/60 mt-0.5 shrink-0 group-hover:text-[var(--theme-accent)] transition-colors">{icon}</div>
-            <p className="font-sans text-sm font-light text-[var(--theme-text)]/60 group-hover:text-[var(--theme-text)]/80 transition-colors">{text}</p>
+            <p className={`font-sans text-sm font-light text-[var(--theme-text)]/60 group-hover:text-[var(--theme-text)]/80 transition-colors ${noWrap ? "whitespace-nowrap" : ""}`}>{text}</p>
         </div>
     );
-    if (href) return <a href={href} className="block">{content}</a>;
+    if (href) return <a href={href} target={href.startsWith('http') ? "_blank" : undefined} rel={href.startsWith('http') ? "noopener noreferrer" : undefined} className="block">{content}</a>;
     return <div>{content}</div>;
 }
 
@@ -102,10 +102,46 @@ export default function FooterImmersif() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1.2, ease: "easeOut" }}
                 viewport={{ once: true, margin: "-100px" }}
-                className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12"
+                className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-12 lg:gap-x-20 gap-y-16"
             >
+                {/* Contact Column */}
+                <div className="order-2 lg:order-1">
+                    <h4 className="font-sans font-bold text-xs uppercase tracking-[0.3em] mb-6 text-[var(--theme-accent)]">Contact</h4>
+                    <ul className="space-y-4">
+                        <ContactItem
+                            icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>}
+                            text="contact@peguycasteloot.fr"
+                            href="mailto:contact@peguycasteloot.fr"
+                        />
+                        <ContactItem
+                            icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" /></svg>}
+                            text="07 49 31 05 90"
+                            href="tel:0749310590"
+                        />
+                        <ContactItem
+                            icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>}
+                            text="1 bis Rue de la Madeleine, 22300 Lannion"
+                            href="https://www.google.com/maps/search/?api=1&query=1+bis+Rue+de+la+Madeleine+22300+Lannion"
+                            noWrap
+                        />
+                    </ul>
+                </div>
+
+                {/* Services Column */}
+                <div className="order-3 lg:order-2">
+                    <h4 className="font-sans font-bold text-xs uppercase tracking-[0.3em] mb-6 text-[var(--theme-accent)]">Services</h4>
+                    <ul className="space-y-3 font-sans font-medium text-base text-[var(--theme-text)]/80">
+                        <li><Link href="/hypnose" className="hover:text-[var(--theme-accent)] hover:translate-x-1 inline-block transition-all">Hypnothérapie</Link></li>
+                        <li><Link href="/sophrologie" className="hover:text-[var(--theme-accent)] hover:translate-x-1 inline-block transition-all">Sophrologie</Link></li>
+                        <li><Link href="/ig-bas" className="hover:text-[var(--theme-accent)] hover:translate-x-1 inline-block transition-all">Équilibre IG Bas</Link></li>
+                        <li><Link href="/voyage-auditif" className="hover:text-[var(--theme-accent)] hover:translate-x-1 inline-block transition-all">Bibliothèque Audio</Link></li>
+                        <li><Link href="/carte-cadeau" className="hover:text-[var(--theme-accent)] hover:translate-x-1 inline-block transition-all">Carte Cadeau 🎁</Link></li>
+                        <li><Link href="/reserver" className="text-[var(--theme-accent)] font-bold hover:translate-x-1 inline-block transition-all">Prendre RDV</Link></li>
+                    </ul>
+                </div>
+
                 {/* Brand Column */}
-                <div className="lg:col-span-2 space-y-6">
+                <div className="lg:col-span-2 space-y-6 order-1 lg:order-3 lg:text-right flex flex-col lg:items-end">
                     <Link href="/">
                         <h3 className="font-serif-display italic text-4xl tracking-tighter text-[var(--theme-text)] hover:text-[var(--theme-accent)] transition-colors duration-500">Harmonie & Sérénité</h3>
                     </Link>
@@ -114,54 +150,19 @@ export default function FooterImmersif() {
                         Je vous accompagne à chaque étape pour transformer vos blocages en forces.
                     </p>
                     {/* Social icons */}
-                    <div className="flex gap-3 flex-wrap">
+                    <div className="flex gap-3 flex-wrap lg:justify-end">
                         {socialLinks.map((link) => (
                             <SocialIcon key={link.label} {...link} />
                         ))}
                     </div>
-                </div>
-
-                {/* Contact Column */}
-                <div>
-                    <h4 className="font-sans font-bold text-xs uppercase tracking-[0.3em] mb-6 text-[var(--theme-accent)]">Contact</h4>
-                    <ul className="space-y-4">
-                        <ContactItem
-                            icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>}
-                            text="contact@peguycasteloot.fr"
-                            href="mailto:contact@peguycasteloot.fr"
-                        />
-                        {/* Tel = Apple Cash deeplink */}
-                        <ContactItem
-                            icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" /></svg>}
-                            text="+33 7 49 31 05 90"
-                            href="tel:+33749310590"
-                        />
-                        <ContactItem
-                            icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>}
-                            text={"1 bis Rue de la Madeleine\n22300 Lannion"}
-                        />
-                    </ul>
-                </div>
-
-                {/* Services Column */}
-                <div>
-                    <h4 className="font-sans font-bold text-xs uppercase tracking-[0.3em] mb-6 text-[var(--theme-accent)]">Services</h4>
-                    <ul className="space-y-3 font-sans font-medium text-base text-[var(--theme-text)]/80">
-                        <li><Link href="/hypnose" className="hover:text-[var(--theme-accent)] hover:translate-x-1 inline-block transition-all">Hypnothérapie</Link></li>
-                        <li><Link href="/sophrologie" className="hover:text-[var(--theme-accent)] hover:translate-x-1 inline-block transition-all">Sophrologie</Link></li>
-                        <li><Link href="/ig-bas" className="hover:text-[var(--theme-accent)] hover:translate-x-1 inline-block transition-all">Équilibre IG Bas</Link></li>
-                        <li><Link href="/voyage-auditif" className="hover:text-[var(--theme-accent)] hover:translate-x-1 inline-block transition-all">Bibliothèque Audio</Link></li>
-                        <li><Link href="/carte-cadeau" className="hover:text-[var(--theme-accent)] hover:translate-x-1 inline-block transition-all">Carte Cadeau 🎁</Link></li>
-                        <li><a href="https://peguycasteloot.fr/reserver" className="text-[var(--theme-accent)] font-bold hover:translate-x-1 inline-block transition-all">Prendre RDV</a></li>
-                    </ul>
                 </div>
             </motion.div>
 
             <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 mt-16 pt-8 border-t border-[var(--theme-text)]/10 flex flex-col md:flex-row justify-between items-center gap-6 text-[10px] uppercase tracking-widest font-bold text-[var(--theme-text)]/40">
                 <p>© 2026 Péguy Casteloot — Tous droits réservés</p>
                 <div className="flex gap-8">
-                    <span className="cursor-pointer hover:text-[var(--theme-accent)] transition-colors">Mentions Légales</span>
-                    <span className="cursor-pointer hover:text-[var(--theme-accent)] transition-colors">Confidentialité</span>
+                    <Link href="/mentions-legales" className="cursor-pointer hover:text-[var(--theme-accent)] transition-colors">Mentions Légales</Link>
+                    <Link href="/confidentialite" className="cursor-pointer hover:text-[var(--theme-accent)] transition-colors">Confidentialité</Link>
                 </div>
             </div>
         </footer>

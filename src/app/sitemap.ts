@@ -10,13 +10,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
         '/ig-bas',
         '/voyage-auditif',
         '/carte-cadeau',
-        '/espace-membre',
+        '/reserver',
         '/contact',
+        '/inscription',
+        '/connexion',
+        '/mentions-legales',
+        '/confidentialite',
     ].map((route) => ({
         url: `${siteUrl}${route}`,
         lastModified: new Date(),
         changeFrequency: 'monthly' as const,
-        priority: route === '' ? 1 : 0.8,
+        priority: route === '' ? 1 :
+            ['/hypnose', '/sophrologie', '/ig-bas', '/voyage-auditif'].includes(route) ? 0.9 : 0.7,
     }));
 
     return routes;

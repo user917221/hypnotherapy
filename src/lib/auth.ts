@@ -3,8 +3,24 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 
+import GoogleProvider from "next-auth/providers/google";
+import AppleProvider from "next-auth/providers/apple";
+import FacebookProvider from "next-auth/providers/facebook";
+
 export const authOptions: NextAuthOptions = {
     providers: [
+        GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID!,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+        }),
+        AppleProvider({
+            clientId: process.env.APPLE_ID!,
+            clientSecret: process.env.APPLE_SECRET!,
+        }),
+        FacebookProvider({
+            clientId: process.env.FACEBOOK_CLIENT_ID!,
+            clientSecret: process.env.FACEBOOK_CLIENT_SECRET!,
+        }),
         CredentialsProvider({
             name: "credentials",
             credentials: {
@@ -44,6 +60,8 @@ export const authOptions: NextAuthOptions = {
                 token.id = user.id;
                 token.prenom = (user as { prenom?: string }).prenom;
                 token.genre = (user as { genre?: string }).genre;
+                // Force ADMIN role for Péguy
+                token.role = user.email === "contact@peguycasteloot.fr" ? "ADMIN" : "USER";
             }
             return token;
         },
@@ -52,6 +70,7 @@ export const authOptions: NextAuthOptions = {
                 (session.user as { id?: string }).id = token.id as string;
                 (session.user as { prenom?: string }).prenom = token.prenom as string;
                 (session.user as { genre?: string }).genre = token.genre as string;
+                (session.user as { role?: string }).role = token.role as string;
             }
             return session;
         },

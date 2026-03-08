@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Leaf, Flame, Brain, ShieldCheck, Heart } from "lucide-react";
-import MagneticButton from "@/components/MagneticButton";
+import MagneticPhoneButton from "@/components/MagneticPhoneButton";
 
 function MagneticListItem({ children, icon: Icon, colorClass }: { children: React.ReactNode, icon: any, colorClass: string }) {
     const ref = useRef<HTMLLIElement>(null);
@@ -183,14 +183,15 @@ export default function IgBasClient() {
                     viewport={{ once: true }}
                     className="mt-32"
                 >
-                    <a href="https://peguycasteloot.fr/reserver" className="group no-underline">
-                        <MagneticButton className="group relative px-12 py-6 rounded-full overflow-hidden transition-all hover:scale-105 active:scale-95 shadow-2xl shadow-theme-accent/20 bg-[var(--theme-accent)] text-[var(--theme-bg)]">
-                            <div className="absolute inset-0 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-in-out" />
-                            <span className="relative z-10 font-sans font-black tracking-[0.2em] transition-colors uppercase flex items-center gap-4 text-sm md:text-base text-[var(--theme-bg)]">
-                                Démarrer l'Accompagnement <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                            </span>
-                        </MagneticButton>
+                    <a
+                        href="/reserver"
+                        className="mt-4 inline-flex items-center gap-3 px-10 py-5 rounded-full bg-[var(--theme-accent)] text-[var(--theme-bg)] font-sans font-black text-sm tracking-[0.2em] uppercase hover:opacity-90 hover:scale-105 transition-all shadow-xl shadow-[var(--theme-accent)]/20"
+                    >
+                        Démarrer l'Accompagnement <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </a>
+                    <div className="mt-12 flex justify-center">
+                        <MagneticPhoneButton />
+                    </div>
                 </motion.div>
             </div>
         </main>

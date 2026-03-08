@@ -32,15 +32,15 @@
 }
 
 .theme-soleil {
-  /* THEME SOLEIL */
-  --theme-bg: #ffffff;
-  /* pure white */
-  --theme-text: #1a1a1a;
-  /* near black */
-  --theme-accent: #6b7280;
-  /* nuance de gris (gray-500) */
-  --theme-accent-alt: #9ca3af;
-  /* gris plus clair */
+  /* THEME SOLEIL - Premium White */
+  --theme-bg: #fafafa;
+  /* Off-white pour moins de fatigue visuelle */
+  --theme-text: #0d2a2a;
+  /* Dark teal-black pour le contraste */
+  --theme-accent: #158c78;
+  /* Vibrant Teal (comme Podia) */
+  --theme-accent-alt: #29b7ab;
+  /* Mint accent */
 }
 
 .theme-nuit {
@@ -62,18 +62,21 @@ body {
   overflow-x: hidden;
 }
 
-/* OVNI Grain & texture */
-.ovni-grain {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  z-index: 9999;
-  pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  opacity: 0.04;
-  mix-blend-mode: overlay;
+/* Micro-interactions: Touch feedback for mobile */
+@media (hover: none) and (pointer: coarse) {
+
+  /* Provide a slight physical feedback (scale down) on mobile tap */
+  a,
+  button,
+  [role="button"] {
+    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+
+  a:active,
+  button:active,
+  [role="button"]:active {
+    transform: scale(0.96) !important;
+  }
 }
 
 /* Fix invisibilite cerveau (image mix-blend) sur theme blanc */
@@ -113,13 +116,14 @@ body {
 
 /* Glass Panels Perfection - Dynamically adapts to theme */
 .glass-ovni {
-  background: color-mix(in srgb, var(--theme-text) 5%, transparent);
-  backdrop-filter: blur(40px) saturate(150%);
-  -webkit-backdrop-filter: blur(40px) saturate(150%);
-  border: 1px solid color-mix(in srgb, var(--theme-text) 10%, transparent);
+  background: color-mix(in srgb, var(--theme-text) 6%, transparent);
+  backdrop-filter: blur(48px) saturate(160%);
+  -webkit-backdrop-filter: blur(48px) saturate(160%);
+  border: 1px solid color-mix(in srgb, var(--theme-text) 12%, transparent);
   box-shadow:
-    0 30px 60px -12px color-mix(in srgb, var(--theme-bg) 50%, transparent),
-    inset 0 1px 0 color-mix(in srgb, var(--theme-text) 15%, transparent);
+    0 40px 80px -20px color-mix(in srgb, var(--theme-bg) 60%, transparent),
+    inset 0 1px 1px color-mix(in srgb, var(--theme-text) 25%, transparent),
+    inset 0 0 40px color-mix(in srgb, var(--theme-text) 2%, transparent);
 }
 
 .text-glow-seafoam {

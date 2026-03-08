@@ -8,7 +8,7 @@ export default function LocalBusinessSchema() {
         "name": "Péguy Casteloot — Hypnose & Sophrologie",
         "description": "Cabinet de bien-être à Lannion spécialisé en hypnothérapie, sophrologie et équilibre nutritionnel IG Bas. Séances en cabinet et à distance.",
         "url": "https://peguycasteloot.fr",
-        "telephone": "+33749310590",
+        "telephone": "07 49 31 05 90",
         "email": "contact@peguycasteloot.fr",
         "image": "https://peguycasteloot.fr/og-image.jpg",
         "priceRange": "€€",

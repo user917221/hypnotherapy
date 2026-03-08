@@ -1,10 +1,10 @@
 "use client";
 
-import MagneticAccordionCard from "@/components/MagneticAccordionCard";
+import MagneticPhoneButton from "@/components/MagneticPhoneButton";
 import KineticText from "@/components/KineticText";
-import SophroDetails from "@/components/SophroDetails";
-import TypewriterReviews from "@/components/TypewriterReviews";
 import { Wind, Activity, Brain } from "lucide-react";
+import MagneticAccordionCard from "@/components/MagneticAccordionCard";
+import SophroDetails from "@/components/SophroDetails";
 
 export default function SophrologieClient() {
     return (
@@ -60,24 +60,17 @@ export default function SophrologieClient() {
                 <SophroDetails />
             </div>
 
-            {/* Témoignages */}
-            <div className="border-t border-[var(--theme-text)]/5 relative z-10">
-                <TypewriterReviews />
-            </div>
-
             {/* CTA Réserver */}
             <div className="relative z-10 py-20 flex flex-col items-center gap-5 text-center">
                 <p className="font-sans text-[var(--theme-text)]/40 font-light text-sm uppercase tracking-widest">Prêt(e) à commencer ?</p>
                 <h2 className="font-serif-display text-4xl md:text-6xl tracking-tighter text-[var(--theme-text)]">Réservez votre séance.</h2>
                 <a
-                    href="https://peguycasteloot.fr/reserver"
+                    href="/reserver"
                     className="mt-4 inline-flex items-center gap-3 px-10 py-5 rounded-full bg-[var(--theme-accent)] text-[var(--theme-bg)] font-sans font-black text-sm tracking-[0.2em] uppercase hover:opacity-90 hover:scale-105 transition-all shadow-xl shadow-[var(--theme-accent)]/20"
                 >
                     Prendre rendez-vous
                 </a>
-                <a href="tel:+33749310590" className="font-sans text-sm text-[var(--theme-text)]/35 hover:text-[var(--theme-accent)] transition-colors">
-                    +33 7 49 31 05 90
-                </a>
+                <MagneticPhoneButton />
             </div>
         </main>
     );

@@ -3,7 +3,7 @@ import InfiniteMarquee from "../components/InfiniteMarquee";
 import FeaturesDashboard from "../components/FeaturesDashboard";
 import PhilosophyManifesto from "../components/PhilosophyManifesto";
 import ProtocolStack from "../components/ProtocolStack";
-import Testimonials from "../components/Testimonials";
+import TypewriterReviews from "../components/TypewriterReviews";
 import FooterImmersif from "../components/FooterImmersif";
 
 export default function Home() {
@@ -25,8 +25,8 @@ export default function Home() {
       {/* Protocoles & Accompagnement */}
       <ProtocolStack />
 
-      {/* Témoignages Clients */}
-      <Testimonials />
+      {/* Témoignages Clients (Déplacés depuis Sophrologie) */}
+      <TypewriterReviews />
 
       {/* Footer Immersif Monumental */}
       <FooterImmersif />

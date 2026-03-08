@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import MagneticButton from "@/components/MagneticButton";
@@ -83,11 +84,13 @@ function EmpathyStream() {
                 Ma bibliothèque audio privée d'hypnose et sophrologie pour prolonger le voyage vers vous-même, à votre rythme.
             </p>
             <div className="mt-4 flex justify-center">
-                <MagneticButton>
-                    <div className="inline-block px-8 py-4 rounded-full border border-[var(--theme-accent)]/30 bg-[var(--theme-accent)]/10 text-[var(--theme-text)] text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-[var(--theme-accent)] hover:text-[var(--theme-bg)] transition-all duration-500 shadow-xl backdrop-blur-md">
-                        Ouvrir la Bibliothèque
-                    </div>
-                </MagneticButton>
+                <Link href="/voyage-auditif" className="no-underline">
+                    <MagneticButton>
+                        <div className="inline-block px-8 py-4 rounded-full border border-[var(--theme-accent)]/30 bg-[var(--theme-accent)]/10 text-[var(--theme-text)] text-[10px] font-bold uppercase tracking-[0.2em] hover:bg-[var(--theme-accent)] hover:text-[var(--theme-bg)] transition-all duration-500 shadow-xl backdrop-blur-md">
+                            Ouvrir la Bibliothèque
+                        </div>
+                    </MagneticButton>
+                </Link>
             </div>
         </div>
     );
@@ -114,9 +117,11 @@ function BookingSelector() {
                     <div className="w-2 h-2 rounded-full bg-[var(--theme-accent)] animate-pulse shadow-[0_0_10px_var(--theme-accent)]" />
                     <span className="font-sans text-[10px] uppercase font-black tracking-[0.3em] text-[var(--theme-accent)]">Créneau disponible demain</span>
                 </div>
-                <MagneticButton className="px-8 py-4 rounded-full border border-[var(--theme-accent)]/30 bg-[var(--theme-accent)]/10 text-[var(--theme-text)] text-[10px] font-black uppercase tracking-[0.3em] hover:bg-[var(--theme-accent)] hover:text-[var(--theme-bg)] transition-colors duration-500 shadow-2xl backdrop-blur-md">
-                    Prendre rendez-vous
-                </MagneticButton>
+                <Link href="/reserver" className="no-underline">
+                    <MagneticButton className="px-8 py-4 rounded-full bg-[var(--theme-accent)] text-[var(--theme-bg)] font-sans font-black text-sm tracking-widest uppercase hover:scale-105 transition-transform shadow-lg shadow-[var(--theme-accent)]/20">
+                        Prendre Rendez-vous
+                    </MagneticButton>
+                </Link>
             </div>
         </div>
     );

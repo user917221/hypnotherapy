@@ -5,6 +5,7 @@ import gsap from "gsap";
 import Image from "next/image";
 import { motion, useScroll, useTransform, useSpring, AnimatePresence } from "framer-motion";
 import MagneticButton from "@/components/MagneticButton";
+import Link from "next/link";
 import SvgDrawingEffect from "./SvgDrawingEffect";
 import KineticText from "./KineticText";
 
@@ -125,9 +126,11 @@ export default function HeroCinematic() {
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 1.4, duration: 1, ease: "easeOut" }}
                         >
-                            <MagneticButton className="px-12 py-6 bg-mint-cream text-teal-deep rounded-full font-sans font-black uppercase tracking-widest text-[10px] hover:bg-seafoam transition-all duration-700 shadow-2xl shadow-teal-deep/50 hover:scale-110">
-                                Commencer l'exploration
-                            </MagneticButton>
+                            <Link href="/hypnose" className="block outline-none">
+                                <MagneticButton className="px-12 py-6 bg-mint-cream text-teal-deep rounded-full font-sans font-black uppercase tracking-widest text-[10px] hover:bg-seafoam transition-all duration-700 shadow-2xl shadow-teal-deep/50 hover:scale-110">
+                                    Commencer l'exploration
+                                </MagneticButton>
+                            </Link>
                         </motion.div>
                         <span className="font-sans text-xs text-mint-cream/40 uppercase tracking-[0.2em] font-bold">
                             Cabinet — Visioconférence
