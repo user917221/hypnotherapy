@@ -6,6 +6,7 @@ import FloatingNavbar from "@/components/FloatingNavbar";
 import Preloader from "@/components/Preloader";
 import CustomCursor from "@/components/CustomCursor";
 import LocalBusinessSchema from "@/components/LocalBusinessSchema";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const poppins = Poppins({
   variable: "--font-sans",
@@ -79,6 +80,7 @@ export default function RootLayout({
         <div className="ovni-grain" />
         <FloatingNavbar />
         <SmoothScroll>{children}</SmoothScroll>
+        <SpeedInsights />
       </body>
     </html>
   );
