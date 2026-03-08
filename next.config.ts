@@ -10,7 +10,6 @@ const nextConfig: NextConfig = {
   },
   // Vercel — les packages natifs Prisma/bcrypt restent côté serveur
   serverExternalPackages: ["@prisma/client", "bcryptjs"],
-  transpilePackages: ["lenis"],
 };
 
 export default nextConfig;
