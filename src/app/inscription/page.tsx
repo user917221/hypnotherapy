@@ -140,6 +140,28 @@ export default function InscriptionPage() {
                             Créer mon compte <ArrowRight className="w-4 h-4" />
                         </button>
 
+                        <div className="relative flex items-center gap-4 py-2">
+                            <div className="flex-1 h-px bg-[var(--theme-text)]/5" />
+                            <span className="text-[10px] font-sans text-[var(--theme-text)]/20 uppercase tracking-widest">ou avec</span>
+                            <div className="flex-1 h-px bg-[var(--theme-text)]/5" />
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-3">
+                            <button type="button" onClick={() => (window.location.href = "/api/auth/signin/google")} className="flex items-center justify-center py-3.5 rounded-2xl bg-[#0a0a0a]/20 border border-[var(--theme-text)]/5 hover:bg-[#0a0a0a]/40 transition-all">
+                                <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-5 h-5" alt="Google" />
+                            </button>
+                            <button type="button" onClick={() => (window.location.href = "/api/auth/signin/apple")} className="flex items-center justify-center py-3.5 rounded-2xl bg-[#0a0a0a]/20 border border-[var(--theme-text)]/5 hover:bg-[#0a0a0a]/40 transition-all">
+                                <svg className="w-5 h-5 fill-[var(--theme-text)]/60" viewBox="0 0 384 512" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 21.8-88.5 21.8-11.4 0-51.1-20.8-82.3-20.1-41.9.8-80.5 24.3-102.1 61.9-44 76.5-11.3 190.4 31.4 252 21 30.1 46.1 63.6 78.4 62.1 31.1-1.4 42.9-20.5 80.5-20.5 37.5 0 48.5 20.5 81 20.1 33-.3 54.4-30 75.4-60.8 24.3-35.4 34.3-69.8 34.7-71.5-1.1-.4-66.6-25.6-67-101.5V268.7zM233 102.5c16.1-19.4 27.1-46.5 24.1-73.4-23.3 1-51.4 15.5-68.1 35.1-15 17.6-28.1 45.4-24.6 71.3 26.2 2 52.8-14.1 68.6-33z" />
+                                </svg>
+                            </button>
+                            <button type="button" onClick={() => (window.location.href = "/api/auth/signin/facebook")} className="flex items-center justify-center py-3.5 rounded-2xl bg-[#0a0a0a]/20 border border-[var(--theme-text)]/5 hover:bg-[#0a0a0a]/40 transition-all">
+                                <svg className="w-6 h-6 text-[#1877F2] opacity-70 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+                                </svg>
+                            </button>
+                        </div>
+
                         <p className="text-center text-[11px] font-sans text-[var(--theme-text)]/30 leading-relaxed">
                             En vous inscrivant, vous acceptez les{" "}
                             <Link href="/conditions-generales" className="text-[var(--theme-accent)]/60 hover:text-[var(--theme-accent)] transition-colors">conditions générales</Link>.

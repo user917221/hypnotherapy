@@ -43,6 +43,11 @@
   /* Mint accent */
 }
 
+.theme-soleil input::placeholder {
+  color: #66af9f !important;
+  opacity: 0.6;
+}
+
 .theme-nuit {
   /* THEME NUIT */
   --theme-bg: #121212;

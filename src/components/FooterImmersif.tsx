@@ -102,10 +102,10 @@ export default function FooterImmersif() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1.2, ease: "easeOut" }}
                 viewport={{ once: true, margin: "-100px" }}
-                className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-12 lg:gap-x-24 gap-y-16"
+                className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-12 lg:gap-x-24 gap-y-16 lg:justify-items-center"
             >
                 {/* Contact Column */}
-                <div className="order-2 lg:order-1">
+                <div className="order-2 lg:order-1 lg:justify-self-start">
                     <h4 className="font-sans font-bold text-xs uppercase tracking-[0.3em] mb-6 text-[var(--theme-accent)]">Contact</h4>
                     <ul className="space-y-4">
                         <ContactItem
@@ -142,7 +142,7 @@ export default function FooterImmersif() {
                 </div>
 
                 {/* Brand Column */}
-                <div className="lg:col-span-2 space-y-6 order-1 lg:order-3 lg:text-right flex flex-col lg:items-end">
+                <div className="lg:col-span-2 space-y-6 order-1 lg:order-3 lg:text-right flex flex-col lg:items-end lg:justify-self-end">
                     <Link href="/">
                         <h3 className="font-serif-display italic text-4xl tracking-tighter text-[var(--theme-text)] hover:text-[var(--theme-accent)] transition-colors duration-500">Harmonie & Sérénité</h3>
                     </Link>

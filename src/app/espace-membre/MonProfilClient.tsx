@@ -12,7 +12,6 @@ import {
     LogOut,
     Clock,
     CheckCircle2,
-    Pause,
     Unlock,
     Mail,
     ArrowRight
@@ -185,7 +184,7 @@ export default function MonProfilClient() {
                                 ) : (
                                     <div className="col-span-full py-20 text-center glass-ovni rounded-[3rem] border border-dashed border-[var(--theme-text)]/10">
                                         <ShoppingBag className="w-12 h-12 mx-auto mb-6 text-[var(--theme-text)]/20" />
-                                        <p className="font-sans text-[var(--theme-text)]/40 mb-8">Vous n'avez pas encore d'audios dans votre bibliothèque.</p>
+                                        <p className="font-sans text-[var(--theme-text)]/40 mb-8">Vous n&apos;avez pas encore d&apos;audios dans votre bibliothèque.</p>
                                         <Link href="/voyage-auditif">
                                             <MagneticButton className="px-8 py-4 bg-[var(--theme-accent)] text-[var(--theme-bg)] rounded-full text-[10px] uppercase font-black tracking-widest">
                                                 Explorer la boutique

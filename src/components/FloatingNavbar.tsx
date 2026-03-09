@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Wind, Leaf, Sun, Moon, Headphones, UserRound } from "lucide-react";
+import { Sparkles, Wind, Leaf, Sun, Moon, Headphones, UserRound, LogIn, UserPlus } from "lucide-react";
 import MagneticButton from "@/components/MagneticButton";
+import { useSession } from "next-auth/react";
 
 type Tab = {
     id: string;
@@ -114,13 +115,7 @@ export default function FloatingNavbar() {
                     </Link>
 
                     {/* Login / Espace Membre */}
-                    <Link
-                        href="/espace-membre"
-                        className="w-10 h-10 flex items-center justify-center rounded-full border border-[var(--theme-accent)]/25 text-[var(--theme-text)]/60 hover:text-[var(--theme-accent)] hover:border-[var(--theme-accent)]/60 hover:bg-[var(--theme-accent)]/8 transition-all duration-300"
-                        aria-label="Espace membre"
-                    >
-                        <UserRound className="w-5 h-5" strokeWidth={1.5} />
-                    </Link>
+                    <DropdownAccount />
 
                     {/* CTA Button → Cfixé */}
                     <Link href="/reserver" className="hidden sm:block px-5 py-2.5 rounded-full bg-[var(--theme-accent)] text-[var(--theme-bg)] font-sans font-black text-xs tracking-widest uppercase hover:scale-105 transition-transform shadow-lg shadow-[var(--theme-accent)]/20 whitespace-nowrap">
@@ -190,5 +185,68 @@ function ThemeToggle({ themeIndex, setThemeIndex }: { themeIndex: number, setThe
                 </motion.div>
             </AnimatePresence>
         </motion.button>
+    );
+}
+
+function DropdownAccount() {
+    const { data: session, status } = useSession();
+    const [isOpen, setIsOpen] = useState(false);
+
+    if (status === "authenticated") {
+        return (
+            <Link
+                href="/espace-membre"
+                className="w-10 h-10 flex items-center justify-center rounded-full border border-[var(--theme-accent)]/25 text-[var(--theme-text)]/60 hover:text-[var(--theme-accent)] hover:border-[var(--theme-accent)]/60 hover:bg-[var(--theme-accent)]/8 transition-all duration-300"
+                aria-label="Espace membre"
+            >
+                <div className="relative">
+                    <UserRound className="w-5 h-5" strokeWidth={1.5} />
+                    <div className="absolute -top-1 -right-1 w-2 h-2 bg-[var(--theme-accent)] rounded-full animate-pulse" />
+                </div>
+            </Link>
+        );
+    }
+
+    return (
+        <div className="relative">
+            <button
+                onClick={() => setIsOpen(!isOpen)}
+                className="w-10 h-10 flex items-center justify-center rounded-full border border-[var(--theme-accent)]/25 text-[var(--theme-text)]/60 hover:text-[var(--theme-accent)] hover:border-[var(--theme-accent)]/60 hover:bg-[var(--theme-accent)]/8 transition-all duration-300"
+                aria-label="Menu compte"
+            >
+                <UserRound className="w-5 h-5" strokeWidth={1.5} />
+            </button>
+
+            <AnimatePresence>
+                {isOpen && (
+                    <>
+                        <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+                        <motion.div
+                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                            className="absolute right-0 bottom-full mb-4 w-48 p-2 rounded-2xl glass-ovni border border-[var(--theme-accent)]/20 shadow-2xl z-50 overflow-hidden"
+                        >
+                            <Link
+                                href="/connexion"
+                                onClick={() => setIsOpen(false)}
+                                className="flex items-center gap-3 w-full px-4 py-3 rounded-xl hover:bg-[var(--theme-accent)]/10 text-sm font-sans transition-colors group"
+                            >
+                                <LogIn className="w-4 h-4 text-[var(--theme-text)]/40 group-hover:text-[var(--theme-accent)]" />
+                                <span className="text-[var(--theme-text)]/80 group-hover:text-[var(--theme-text)]">Se connecter</span>
+                            </Link>
+                            <Link
+                                href="/inscription"
+                                onClick={() => setIsOpen(false)}
+                                className="flex items-center gap-3 w-full px-4 py-3 rounded-xl hover:bg-[var(--theme-accent)]/10 text-sm font-sans transition-colors group"
+                            >
+                                <UserPlus className="w-4 h-4 text-[var(--theme-text)]/40 group-hover:text-[var(--theme-accent)]" />
+                                <span className="text-[var(--theme-text)]/80 group-hover:text-[var(--theme-text)]">S&apos;inscrire</span>
+                            </Link>
+                        </motion.div>
+                    </>
+                )}
+            </AnimatePresence>
+        </div>
     );
 }
