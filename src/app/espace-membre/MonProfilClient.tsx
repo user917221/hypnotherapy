@@ -21,6 +21,7 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import MagneticButton from "@/components/MagneticButton";
 import MagneticPhoneButton from "@/components/MagneticPhoneButton";
+import AudioPlayerCustom from "@/components/AudioPlayerCustom";
 
 // Mock data pour la structure (Sera remplacé par des appels API/Supabase)
 const mockUser = {
@@ -41,8 +42,8 @@ const podiaProducts = [
         title: "Sommeil Profond",
         description: "Retrouvez des nuits paisibles et réparatrices grâce à l'hypnose. Un programme complet pour reprogrammer votre cycle de sommeil.",
         price: 19,
-        image: "https://peguycasteloot.podia.com/content-assets/public/eyJhbGciOiJIUzI1NiJ9.eyJvYmplY3Rfa2V5IjoicXJkdno2bm93NjI4cWJjcmNoMmtkejBxNm9xcyIsImRvbWFpbiI6InBlZ3V5Y2FzdGVsb290LnBvZGlhLmNvbSJ9.-2daZfV9ZfAnaDhbsI5JvqGSI5pV3PUtD4tajawsm0A",
-        url: "https://peguycasteloot.podia.com/sommeil"
+        image: "/images/products/sommeil.jpg",
+        url: "#"
     },
     {
         id: "stress",
@@ -50,7 +51,7 @@ const podiaProducts = [
         description: "Libérez-vous des tensions quotidiennes et retrouvez votre calme intérieur. Apprenez à gérer vos émotions et votre anxiété.",
         price: 19,
         image: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=800&auto=format&fit=crop",
-        url: "https://peguycasteloot.podia.com/gestion-du-stress"
+        url: "#"
     },
     {
         id: "estime",
@@ -58,7 +59,7 @@ const podiaProducts = [
         description: "Renouer avec sa valeur intérieure. Travaillez sur l'amour propre et la libération des croyances limitantes.",
         price: 22,
         image: "https://images.unsplash.com/photo-1499728603263-13726abce5fd?q=80&w=800&auto=format&fit=crop",
-        url: "https://peguycasteloot.podia.com/amour-et-estime-de-soi"
+        url: "#"
     },
     {
         id: "energie",
@@ -66,7 +67,7 @@ const podiaProducts = [
         description: "Une séance dynamisante pour sortir de la fatigue chronique. Retrouvez votre vitalité et votre motivation naturelle.",
         price: 22,
         image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=800&auto=format&fit=crop",
-        url: "https://peguycasteloot.podia.com/retrouver-l-elegie"
+        url: "#"
     },
     {
         id: "poids",
@@ -74,7 +75,7 @@ const podiaProducts = [
         description: "Reprogrammer ses comportements alimentaires. Réduire les compulsions et retrouver le signal de satiété.",
         price: 24,
         image: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?q=80&w=800&auto=format&fit=crop",
-        url: "https://peguycasteloot.podia.com/nutrition-perte-de-poid"
+        url: "#"
     }
 ];
 
@@ -103,34 +104,7 @@ export default function MonProfilClient() {
         }
     }, [session?.user]);
 
-    // Simulation de lecture audio & Sauvegarde
-    useEffect(() => {
-        let interval: any;
-        if (playingAudio) {
-            interval = setInterval(() => {
-                setAudioTimes(prev => {
-                    const newTime = (prev[playingAudio] || 0) + 1;
-                    const updated = { ...prev, [playingAudio]: newTime };
-                    const userId = (session?.user as any)?.id;
-                    if (userId) {
-                        localStorage.setItem(`audio-progress-${userId}`, JSON.stringify(updated));
-                    }
-                    return updated;
-                });
-            }, 1000);
-        }
-        return () => clearInterval(interval);
-    }, [playingAudio, session?.user]);
-
-    const handlePlay = (audioId: string) => {
-        setPlayingAudio(prev => prev === audioId ? null : audioId);
-    };
-
-    const formatTime = (seconds: number) => {
-        const mins = Math.floor(seconds / 60);
-        const secs = Math.floor(seconds % 60);
-        return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-    };
+    // AudioPlayerCustom gère son propre état de lecture localement
 
     if (!isMounted) return null;
 
@@ -153,7 +127,7 @@ export default function MonProfilClient() {
                         </h1>
                     </motion.div>
 
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-wrap items-center gap-4">
                         <MagneticPhoneButton className="scale-90" />
                         <button
                             onClick={() => { import('next-auth/react').then(m => m.signOut({ callbackUrl: '/' })) }}
@@ -166,7 +140,7 @@ export default function MonProfilClient() {
                 </div>
 
                 {/* Tabs Navigation */}
-                <div className="flex gap-2 p-1 rounded-2xl bg-[var(--theme-text)]/5 border border-[var(--theme-text)]/10 mb-12 max-w-xl">
+                <div className="flex overflow-x-auto no-scrollbar gap-2 p-1 rounded-2xl bg-[var(--theme-text)]/5 border border-[var(--theme-text)]/10 mb-12 max-w-full lg:max-w-xl snap-x snap-mandatory">
                     {[
                         { id: "audios", label: "Mes Audios", icon: Headphones },
                         { id: "boutique", label: "Boutique", icon: ShoppingBag },
@@ -176,13 +150,13 @@ export default function MonProfilClient() {
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as any)}
-                            className={`flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-sans text-[10px] uppercase tracking-widest font-black transition-all ${activeTab === tab.id
+                            className={`flex-1 min-w-[120px] snap-center flex items-center justify-center gap-2 py-3 rounded-xl font-sans text-[10px] uppercase tracking-widest font-black transition-all ${activeTab === tab.id
                                 ? "bg-[var(--theme-accent)] text-[var(--theme-bg)] shadow-lg shadow-[var(--theme-accent)]/20"
                                 : "text-[var(--theme-text)]/40 hover:text-[var(--theme-text)] hover:bg-[var(--theme-text)]/5"
                                 }`}
                         >
                             <tab.icon className="w-4 h-4" />
-                            <span className="hidden sm:inline">{tab.label}</span>
+                            <span>{tab.label}</span>
                         </button>
                     ))}
                 </div>
@@ -198,58 +172,15 @@ export default function MonProfilClient() {
                     >
                         {/* TAB: AUDIOS */}
                         {activeTab === "audios" && (
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="flex flex-col gap-8 max-w-4xl">
                                 {mockOrders.length > 0 ? (
                                     mockOrders.map((order) => (
-                                        <div key={order.id} className="glass-ovni p-8 rounded-[2.5rem] border border-[var(--theme-accent)]/10 hover:border-[var(--theme-accent)]/30 transition-all group relative overflow-hidden">
-                                            <div className="flex items-center gap-6">
-                                                <button
-                                                    onClick={() => handlePlay(order.id)}
-                                                    className={`w-16 h-16 rounded-full flex items-center justify-center transition-all ${playingAudio === order.id
-                                                        ? "bg-[var(--theme-accent)] text-[var(--theme-bg)] shadow-[0_0_30px_var(--theme-accent)]/50"
-                                                        : "bg-[var(--theme-text)]/5 text-[var(--theme-text)] hover:scale-105"
-                                                        }`}
-                                                >
-                                                    {playingAudio === order.id ? <Pause className="w-6 h-6" fill="currentColor" /> : <Play className="w-6 h-6 ml-1" fill="currentColor" />}
-                                                </button>
-                                                <div className="flex-1">
-                                                    <h3 className="font-serif-display text-2xl mb-1">{order.produit}</h3>
-                                                    <div className="flex items-center gap-4 text-[10px] uppercase font-bold text-[var(--theme-text)]/40 tracking-widest">
-                                                        <span>Débloqué le {order.date}</span>
-                                                        <span className="w-1 h-1 rounded-full bg-[var(--theme-accent)]" />
-                                                        <span className="text-[var(--theme-accent)]">Prêt à l'écoute</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-
-                                            {/* Lecteur Intégré */}
-                                            {playingAudio === order.id && (
-                                                <motion.div
-                                                    initial={{ opacity: 0, height: 0 }}
-                                                    animate={{ opacity: 1, height: "auto" }}
-                                                    className="mt-8 pt-8 border-t border-[var(--theme-text)]/5"
-                                                >
-                                                    <div className="flex items-center justify-between mb-4">
-                                                        <span className="text-[10px] font-mono opacity-40">{formatTime(audioTimes[order.id] || 0)}</span>
-                                                        <div className="flex-1 mx-6 h-1 bg-[var(--theme-text)]/5 rounded-full overflow-hidden relative">
-                                                            <div
-                                                                className="absolute left-0 top-0 h-full bg-[var(--theme-accent)] transition-all duration-1000"
-                                                                style={{ width: `${Math.min(100, ((audioTimes[order.id] || 0) / 2100) * 100)}%` }}
-                                                            />
-                                                        </div>
-                                                        <span className="text-[10px] font-mono opacity-40">35:00</span>
-                                                    </div>
-                                                    <div className="flex gap-4">
-                                                        <button
-                                                            onClick={() => window.location.href = `mailto:${session?.user?.email}?subject=Lien de mon audio : ${order.produit}`}
-                                                            className="text-[10px] uppercase tracking-widest font-black text-[var(--theme-accent)] hover:opacity-70 flex items-center gap-2"
-                                                        >
-                                                            <Mail className="w-3 h-3" /> Recevoir par mail
-                                                        </button>
-                                                    </div>
-                                                </motion.div>
-                                            )}
-                                        </div>
+                                        <AudioPlayerCustom
+                                            key={order.id}
+                                            src={order.audioUrl}
+                                            title={order.produit}
+                                            description={`Débloqué le ${order.date}. Profitez de votre séance d'hypnose guidée.`}
+                                        />
                                     ))
                                 ) : (
                                     <div className="col-span-full py-20 text-center glass-ovni rounded-[3rem] border border-dashed border-[var(--theme-text)]/10">
@@ -328,8 +259,7 @@ export default function MonProfilClient() {
                                                 </div>
                                                 <button
                                                     onClick={() => {
-                                                        const firstOffer = podiaProducts.find(p => p.id === selectedOffers[0]);
-                                                        if (firstOffer) window.open(firstOffer.url, "_blank");
+                                                        alert("Redirection vers le système de paiement sécurisé local en cours de configuration...");
                                                     }}
                                                     className="px-8 py-4 bg-[var(--theme-accent)] text-[var(--theme-bg)] rounded-2xl font-sans text-[11px] uppercase font-black tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-3"
                                                 >
@@ -401,12 +331,12 @@ export default function MonProfilClient() {
                                             </div>
                                             <p className="text-xs font-light opacity-80">Un mail vous sera envoyé demain pour recueillir vos premières impressions.</p>
                                         </div>
-                                        <div className="p-6 rounded-2xl bg-[var(--theme-text)]/5 border border-[var(--theme-text)]/5 opacity-50">
+                                        <div className="p-6 rounded-2xl bg-[var(--theme-accent)]/5 border border-[var(--theme-accent)]/20 shadow-[0_0_20px_rgba(var(--theme-accent-rgb),0.1)]">
                                             <div className="flex items-center gap-3 mb-2">
-                                                <Mail className="w-4 h-4" />
-                                                <span className="text-[10px] uppercase font-bold tracking-widest opacity-60">Bilan J+7</span>
+                                                <Mail className="w-4 h-4 text-[var(--theme-accent)]" />
+                                                <span className="text-[10px] uppercase font-bold tracking-widest text-[var(--theme-accent)]">Bilan J+7</span>
                                             </div>
-                                            <p className="text-xs font-light">Point complet sur l'intégration des suggestions hypnotiques.</p>
+                                            <p className="text-xs font-light text-[var(--theme-text)]">Point complet sur l'intégration des suggestions hypnotiques.</p>
                                         </div>
                                         <div className="p-6 rounded-2xl bg-[var(--theme-accent)]/10 border border-[var(--theme-accent)]/20">
                                             <div className="flex items-center gap-3 mb-2">
@@ -430,6 +360,6 @@ export default function MonProfilClient() {
                     </motion.div>
                 </AnimatePresence>
             </div>
-        </main>
+        </main >
     );
 }

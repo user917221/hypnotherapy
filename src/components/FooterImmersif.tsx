@@ -102,7 +102,7 @@ export default function FooterImmersif() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1.2, ease: "easeOut" }}
                 viewport={{ once: true, margin: "-100px" }}
-                className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-32 lg:gap-x-64 gap-y-16"
+                className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-12 lg:gap-x-24 gap-y-16"
             >
                 {/* Contact Column */}
                 <div className="order-2 lg:order-1">
@@ -117,6 +117,7 @@ export default function FooterImmersif() {
                             icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z" /></svg>}
                             text="07 49 31 05 90"
                             href="tel:0749310590"
+                            noWrap
                         />
                         <ContactItem
                             icon={<svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={1.5} viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>}
@@ -131,12 +132,12 @@ export default function FooterImmersif() {
                 <div className="order-3 lg:order-2">
                     <h4 className="font-sans font-bold text-xs uppercase tracking-[0.3em] mb-6 text-[var(--theme-accent)]">Services</h4>
                     <ul className="space-y-3 font-sans font-medium text-base text-[var(--theme-text)]/80">
-                        <li><Link href="/hypnose" className="hover:text-[var(--theme-accent)] hover:translate-x-1 inline-block transition-all">Hypnothérapie</Link></li>
-                        <li><Link href="/sophrologie" className="hover:text-[var(--theme-accent)] hover:translate-x-1 inline-block transition-all">Sophrologie</Link></li>
-                        <li><Link href="/ig-bas" className="hover:text-[var(--theme-accent)] hover:translate-x-1 inline-block transition-all">Équilibre IG Bas</Link></li>
-                        <li><Link href="/voyage-auditif" className="hover:text-[var(--theme-accent)] hover:translate-x-1 inline-block transition-all">Bibliothèque Audio</Link></li>
-                        <li><Link href="/carte-cadeau" className="hover:text-[var(--theme-accent)] hover:translate-x-1 inline-block transition-all">Carte Cadeau 🎁</Link></li>
-                        <li><Link href="/reserver" className="text-[var(--theme-accent)] font-bold hover:translate-x-1 inline-block transition-all">Prendre RDV</Link></li>
+                        <li><Link href="/hypnose" className="hover:text-[var(--theme-accent)] hover:translate-x-1 inline-block transition-all whitespace-nowrap">Hypnothérapie</Link></li>
+                        <li><Link href="/sophrologie" className="hover:text-[var(--theme-accent)] hover:translate-x-1 inline-block transition-all whitespace-nowrap">Sophrologie</Link></li>
+                        <li><Link href="/ig-bas" className="hover:text-[var(--theme-accent)] hover:translate-x-1 inline-block transition-all whitespace-nowrap">Équilibre IG Bas</Link></li>
+                        <li><Link href="/voyage-auditif" className="hover:text-[var(--theme-accent)] hover:translate-x-1 inline-block transition-all whitespace-nowrap">Bibliothèque Audio</Link></li>
+                        <li><Link href="/carte-cadeau" className="hover:text-[var(--theme-accent)] hover:translate-x-1 inline-block transition-all whitespace-nowrap">Carte Cadeau 🎁</Link></li>
+                        <li><Link href="/reserver" className="text-[var(--theme-accent)] font-bold hover:translate-x-1 inline-block transition-all whitespace-nowrap">Prendre RDV</Link></li>
                     </ul>
                 </div>
 

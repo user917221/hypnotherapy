@@ -8,7 +8,7 @@ import MagneticPhoneButton from "../../components/MagneticPhoneButton";
 import MagneticButton from "../../components/MagneticButton";
 import KineticText from "../../components/KineticText";
 
-const PODIA_BASE = "https://peguycasteloot.podia.com";
+// Base de données locale des produits (Transition Hors-Podia)
 
 const discoveryAudios = [
     {
@@ -40,7 +40,6 @@ const audioProducts = [
         tag: "Sommeil",
         icon: <Moon className="w-6 h-6" />,
         color: "var(--theme-accent-alt)",
-        podiaUrl: `${PODIA_BASE}/sommeil`,
         tracks: ["Induction douce", "Relaxation corps entier", "Programmation du sommeil"],
     },
     {
@@ -53,7 +52,6 @@ const audioProducts = [
         tag: "Stress & Anxiété",
         icon: <Wind className="w-6 h-6" />,
         color: "var(--theme-accent)",
-        podiaUrl: `${PODIA_BASE}/gestion-du-stress`,
         tracks: ["Respiration calmante", "Relâchement musculaire", "Ancrage sécurisant"],
     },
     {
@@ -66,7 +64,6 @@ const audioProducts = [
         tag: "Confiance",
         icon: <Heart className="w-6 h-6" />,
         color: "var(--theme-accent)",
-        podiaUrl: `${PODIA_BASE}/amour-et-estime-de-soi`,
         tracks: ["Reconnexion à soi", "Dissolution des croyances", "Ancrage de l'estime"],
         highlight: true,
     },
@@ -80,7 +77,6 @@ const audioProducts = [
         tag: "Énergie & Joie",
         icon: <Sparkles className="w-6 h-6" />,
         color: "var(--theme-accent-alt)",
-        podiaUrl: `${PODIA_BASE}/retrouver-l-elegie`,
         tracks: ["Induction par la nature", "Voyage mémoriel positif", "Resurface en légèreté"],
     },
     {
@@ -93,7 +89,6 @@ const audioProducts = [
         tag: "Corps & Alimentation",
         icon: <Leaf className="w-6 h-6" />,
         color: "var(--theme-accent)",
-        podiaUrl: `${PODIA_BASE}/nutrition-perte-de-poid`,
         tracks: ["Désamorçage des compulsions", "Hypnose de satiété", "Nouveau rapport au corps"],
     },
 ];
@@ -316,9 +311,7 @@ export default function VoyageAuditifClient() {
                                     {product.price} €
                                 </p>
                                 <a
-                                    href={product.podiaUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
+                                    href={product.id === "sommeil" ? "/audios/sommeil-preview.mp3" : "#"}
                                     className="inline-flex items-center gap-2 px-6 py-3 rounded-full font-sans font-bold text-sm tracking-wide transition-all hover:scale-105 hover:shadow-lg"
                                     style={{
                                         background: product.color,
@@ -326,7 +319,7 @@ export default function VoyageAuditifClient() {
                                         boxShadow: `0 8px 24px ${product.color}20`,
                                     }}
                                 >
-                                    Accéder <ArrowRight className="w-4 h-4" />
+                                    Commander <ArrowRight className="w-4 h-4" />
                                 </a>
                             </div>
                         </motion.div>

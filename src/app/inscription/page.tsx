@@ -142,7 +142,7 @@ export default function InscriptionPage() {
 
                         <p className="text-center text-[11px] font-sans text-[var(--theme-text)]/30 leading-relaxed">
                             En vous inscrivant, vous acceptez les{" "}
-                            <a href="https://peguycasteloot.podia.com" target="_blank" className="text-[var(--theme-accent)]/60 hover:text-[var(--theme-accent)] transition-colors">conditions générales</a>.
+                            <Link href="/conditions-generales" className="text-[var(--theme-accent)]/60 hover:text-[var(--theme-accent)] transition-colors">conditions générales</Link>.
                         </p>
                     </form>
 
