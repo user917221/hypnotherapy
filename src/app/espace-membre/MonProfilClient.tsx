@@ -17,7 +17,8 @@ import {
     ArrowRight
 } from "lucide-react";
 import Link from "next/link";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import MagneticButton from "@/components/MagneticButton";
 import MagneticPhoneButton from "@/components/MagneticPhoneButton";
 import AudioPlayerCustom from "@/components/AudioPlayerCustom";
@@ -83,7 +84,8 @@ const mockRdv = [
 ];
 
 export default function MonProfilClient() {
-    const { data: session } = useSession();
+    const { data: session, status } = useSession();
+    const router = useRouter();
     const [activeTab, setActiveTab] = useState<"audios" | "rdv" | "suivi" | "boutique">("audios");
     const [playingAudio, setPlayingAudio] = useState<string | null>(null);
     const [selectedOffers, setSelectedOffers] = useState<string[]>([]);
@@ -93,6 +95,13 @@ export default function MonProfilClient() {
     useEffect(() => {
         setIsMounted(true);
     }, []);
+
+    // Redirect if not authenticated
+    useEffect(() => {
+        if (isMounted && status === "unauthenticated") {
+            router.push("/connexion");
+        }
+    }, [isMounted, status, router]);
 
     // Charger la progression au démarrage
     useEffect(() => {

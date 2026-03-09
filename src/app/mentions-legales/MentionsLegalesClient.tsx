@@ -23,9 +23,11 @@ export default function MentionsLegalesClient() {
                         <section>
                             <h2 className="text-[10px] uppercase tracking-[0.3em] font-black text-[var(--theme-accent)] mb-4">1. Éditeur du site</h2>
                             <p>
-                                Le présent site web est édité par <strong>Péguy Casteloot</strong>, exerçant en tant qu'auto-entrepreneur.<br />
-                                Siège social : Lannion, Bretagne, France.<br />
-                                SIRET : [Renseigner votre SIRET]<br />
+                                Le présent site web est édité par la société <strong>SARL P3C</strong>.<br />
+                                Siège social : Carantec, Bretagne, France.<br />
+                                Capital social : 1 000 €<br />
+                                SIRET : 921 837 472 00015<br />
+                                Responsable de la publication : <strong>Péguy Casteloot</strong><br />
                                 Contact : <a href="mailto:contact@peguycasteloot.fr" className="text-[var(--theme-accent)] underline">contact@peguycasteloot.fr</a>
                             </p>
                         </section>

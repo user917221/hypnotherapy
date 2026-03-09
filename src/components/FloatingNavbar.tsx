@@ -222,10 +222,10 @@ function DropdownAccount() {
                     <>
                         <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
                         <motion.div
-                            initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                            initial={{ opacity: 0, y: -10, scale: 0.95 }}
                             animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                            className="absolute right-0 bottom-full mb-4 w-48 p-2 rounded-2xl glass-ovni border border-[var(--theme-accent)]/20 shadow-2xl z-50 overflow-hidden"
+                            exit={{ opacity: 0, y: -10, scale: 0.95 }}
+                            className="absolute right-0 top-full mt-4 w-48 p-2 rounded-2xl glass-ovni border border-[var(--theme-accent)]/20 shadow-2xl z-50 overflow-hidden"
                         >
                             <Link
                                 href="/connexion"
