@@ -92,7 +92,7 @@ export default function ContactClient() {
                             <p className="font-sans text-sm md:text-base font-light opacity-80 mb-8 max-w-[250px]">Choisissez un créneau en ligne, immédiatement.</p>
                             <MagneticButton className="w-full">
                                 <a
-                                    href="https://calendly.com"
+                                    href="https://calendly.com/peguy-casteloot"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="block w-full px-6 py-4 rounded-full bg-[var(--theme-accent)] text-[var(--theme-bg)] font-sans font-black text-[10px] md:text-xs tracking-[0.2em] uppercase hover:opacity-90 hover:scale-[1.02] transition-all shadow-lg shadow-[var(--theme-accent)]/20"

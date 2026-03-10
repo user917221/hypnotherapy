@@ -4,22 +4,12 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 
 import GoogleProvider from "next-auth/providers/google";
-import AppleProvider from "next-auth/providers/apple";
-import FacebookProvider from "next-auth/providers/facebook";
 
 export const authOptions: NextAuthOptions = {
     providers: [
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID!,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-        }),
-        AppleProvider({
-            clientId: process.env.APPLE_ID!,
-            clientSecret: process.env.APPLE_SECRET!,
-        }),
-        FacebookProvider({
-            clientId: process.env.FACEBOOK_CLIENT_ID!,
-            clientSecret: process.env.FACEBOOK_CLIENT_SECRET!,
         }),
         CredentialsProvider({
             name: "credentials",
@@ -55,7 +45,36 @@ export const authOptions: NextAuthOptions = {
         error: "/connexion",
     },
     callbacks: {
-        async jwt({ token, user }) {
+        async signIn({ user, account, profile }) {
+            if (account?.provider !== "credentials") {
+                if (!user.email) return false;
+
+                try {
+                    // Check if user exists in database
+                    const existingUser = await prisma.user.findUnique({
+                        where: { email: user.email },
+                    });
+
+                    if (!existingUser) {
+                        // Create user if they don't exist
+                        await prisma.user.create({
+                            data: {
+                                email: user.email,
+                                prenom: (profile as any)?.given_name || user?.name?.split(" ")[0] || "Prénom",
+                                nom: (profile as any)?.family_name || user?.name?.split(" ")[1] || "Nom",
+                                password: "", // No password for social logins
+                                genre: "femme", // Default
+                            },
+                        });
+                    }
+                } catch (error) {
+                    console.error("Auth Exception in signIn callback:", error);
+                    return false;
+                }
+            }
+            return true;
+        },
+        async jwt({ token, user, trigger, session }) {
             if (user) {
                 token.id = user.id;
                 token.prenom = (user as { prenom?: string }).prenom;
@@ -63,6 +82,12 @@ export const authOptions: NextAuthOptions = {
                 // Force ADMIN role for Péguy
                 token.role = user.email === "contact@peguycasteloot.fr" ? "ADMIN" : "USER";
             }
+
+            // Support session update
+            if (trigger === "update" && session) {
+                return { ...token, ...session };
+            }
+
             return token;
         },
         async session({ session, token }) {

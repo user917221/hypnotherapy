@@ -25,8 +25,8 @@ export async function POST(req: Request) {
             { id: user.id, email: user.email, prenom: user.prenom, genre: user.genre },
             { status: 201 }
         );
-    } catch (err) {
-        console.error(err);
+    } catch (err: any) {
+        console.error("Erreur serveur lors de l'enregistrement:", err);
         return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
     }
 }

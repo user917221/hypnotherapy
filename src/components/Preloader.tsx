@@ -8,18 +8,26 @@ export default function Preloader() {
     const [progress, setProgress] = useState(0);
 
     useEffect(() => {
+        // Optimisation : Ne pas réafficher le preloader si déjà vu dans la session
+        const hasSeenPreloader = sessionStorage.getItem("hasSeenPreloader");
+        if (hasSeenPreloader) {
+            setLoading(false);
+            return;
+        }
+
         let currentProgress = 0;
         const interval = setInterval(() => {
-            // Progression douce et organique
-            currentProgress += Math.floor(Math.random() * 8) + 2;
+            // Progression beaucoup plus rapide pour améliorer le FCP/LCP
+            currentProgress += Math.floor(Math.random() * 15) + 10;
             if (currentProgress >= 100) {
                 setProgress(100);
                 clearInterval(interval);
-                setTimeout(() => setLoading(false), 800);
+                sessionStorage.setItem("hasSeenPreloader", "true");
+                setTimeout(() => setLoading(false), 300); // Délai réduit
             } else {
                 setProgress(currentProgress);
             }
-        }, 60);
+        }, 30); // Intervalle divisé par 2
 
         return () => clearInterval(interval);
     }, []);

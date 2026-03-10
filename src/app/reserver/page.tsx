@@ -61,9 +61,8 @@ export default function ReserverPage() {
                         </div>
                     </div>
 
-                    {/* Calendly Column */}
                     <div className="lg:col-span-3">
-                        <div className="glass-ovni rounded-[2.5rem] p-2 md:p-6 border border-[var(--theme-text)]/10 backdrop-blur-sm">
+                        <div className="glass-ovni rounded-[2.5rem] p-1 pb-0 border border-[var(--theme-text)]/10 backdrop-blur-sm overflow-hidden">
                             <CalendlyWidget />
                         </div>
                     </div>

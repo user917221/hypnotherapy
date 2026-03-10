@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, Wind, Leaf, Sun, Moon, Headphones, UserRound, LogIn, UserPlus } from "lucide-react";
+import { Sparkles, Wind, Leaf, Sun, Moon, Headphones, UserRound, LogIn, UserPlus, Home, Menu, X, Instagram } from "lucide-react";
 import MagneticButton from "@/components/MagneticButton";
 import { useSession } from "next-auth/react";
 
@@ -31,6 +31,7 @@ const themes = [
 export default function FloatingNavbar() {
     const pathname = usePathname();
     const [themeIndex, setThemeIndex] = useState(1); // Default to Soleil (White)
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const currentTheme = themes[themeIndex];
 
@@ -51,11 +52,10 @@ export default function FloatingNavbar() {
         localStorage.setItem("theme-index", String(themeIndex));
     }, [currentTheme, themeIndex]);
 
-    // Smooth grain background
+    // Removed heavy SVG grain for better performance on mobile
     const grainStyle = {
-        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-        opacity: 0.08,
-        mixBlendMode: "overlay" as const
+        background: "radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 100%)",
+        opacity: 0.5,
     };
 
     return (
@@ -64,12 +64,22 @@ export default function FloatingNavbar() {
                 initial={{ y: -50, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ duration: 0.8, ease: "easeOut" }}
-                className="pointer-events-auto relative flex items-center gap-2 sm:gap-4 p-2 rounded-full border border-[var(--theme-accent)]/20 backdrop-blur-2xl shadow-2xl transition-colors duration-500 max-w-[95%] overflow-x-auto no-scrollbar bg-[var(--theme-bg)]/80 text-[var(--theme-text)]"
+                className="pointer-events-auto relative flex items-center gap-2 sm:gap-4 p-2 rounded-full border border-[var(--theme-accent)]/20 backdrop-blur-2xl shadow-2xl transition-colors duration-500 max-w-[95%] bg-[var(--theme-bg)]/80 text-[var(--theme-text)]"
             >
                 {/* Radial ambient glow below grain */}
                 <div className="absolute inset-0 rounded-full overflow-hidden pointer-events-none">
                     <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[150%] bg-[radial-gradient(circle,var(--theme-accent)_0%,transparent_60%)] opacity-10" />
                     <div className="absolute inset-0 saturate-50" style={grainStyle} />
+                </div>
+
+                {/* Mobile Home Button / Brand */}
+                <div className="flex lg:hidden pl-4 pr-2 items-center relative z-10 transition-opacity">
+                    <Link href="/" className="flex items-center gap-2 group" aria-label="Retour à l'accueil">
+                        <Home className="w-5 h-5 text-[var(--theme-accent)] group-hover:scale-110 transition-transform" />
+                        <span className="font-sans font-black tracking-tighter text-sm uppercase opacity-90 whitespace-nowrap">
+                            Péguy Casteloot
+                        </span>
+                    </Link>
                 </div>
 
                 <div className="hidden lg:flex pl-6 pr-2 items-center relative z-10 transition-opacity">
@@ -78,8 +88,8 @@ export default function FloatingNavbar() {
                     </Link>
                 </div>
 
-                {/* Main Tabs Segment */}
-                <div className="flex items-center rounded-full relative z-10">
+                {/* Main Tabs Segment - Desktop Only */}
+                <div className="hidden lg:flex items-center rounded-full relative z-10">
                     {tabs.map((tab) => {
                         const isActive = pathname === tab.href;
                         return (
@@ -97,32 +107,45 @@ export default function FloatingNavbar() {
                     })}
                 </div>
 
-                <div className="w-[1px] h-8 bg-current opacity-10 mx-2 z-10 hidden sm:block shrink-0" />
+                <div className="w-[1px] h-8 bg-current opacity-10 mx-2 z-10 hidden lg:block shrink-0" />
 
                 {/* Control Panel: Toggle + Button */}
-                <div className="relative z-10 px-2 flex items-center gap-3 shrink-0">
-                    <ThemeToggle themeIndex={themeIndex} setThemeIndex={setThemeIndex} />
+                <div className="relative z-10 px-2 flex items-center gap-1 sm:gap-3 shrink-0">
+                    <div className="hidden lg:flex items-center gap-3">
+                        <ThemeToggle themeIndex={themeIndex} setThemeIndex={setThemeIndex} />
+                        <InstagramLink />
+                        <DropdownAccount />
+                    </div>
 
-                    {/* Instagram Link */}
-                    <Link
-                        href="https://www.instagram.com/peguy.casteloot/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="w-10 h-10 flex items-center justify-center rounded-full border border-[var(--theme-accent)]/25 text-[var(--theme-text)]/60 hover:text-[#E1306C] hover:border-[#E1306C]/60 hover:bg-[#E1306C]/10 transition-all duration-300"
-                        aria-label="Instagram Péguy Casteloot"
-                    >
-                        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" /></svg>
-                    </Link>
+                    <div className="lg:hidden flex items-center gap-2">
+                        <DropdownAccount />
+                    </div>
 
-                    {/* Login / Espace Membre */}
-                    <DropdownAccount />
-
-                    {/* CTA Button → Cfixé */}
                     <Link href="/reserver" className="hidden sm:block px-5 py-2.5 rounded-full bg-[var(--theme-accent)] text-[var(--theme-bg)] font-sans font-black text-xs tracking-widest uppercase hover:scale-105 transition-transform shadow-lg shadow-[var(--theme-accent)]/20 whitespace-nowrap">
                         Prendre RDV
                     </Link>
+
+                    {/* Mobile Menu Toggle */}
+                    <button
+                        onClick={() => setIsMenuOpen(true)}
+                        className="lg:hidden w-10 h-10 flex items-center justify-center rounded-full bg-[var(--theme-accent)]/10 text-[var(--theme-accent)] border border-[var(--theme-accent)]/20 hover:bg-[var(--theme-accent)]/20 transition-colors pointer-events-auto"
+                        aria-label="Ouvrir le menu"
+                    >
+                        <Menu className="w-5 h-5" />
+                    </button>
                 </div>
             </motion.nav>
+
+            <AnimatePresence mode="wait">
+                {isMenuOpen && (
+                    <MobileDrawer
+                        onClose={() => setIsMenuOpen(false)}
+                        themeIndex={themeIndex}
+                        setThemeIndex={setThemeIndex}
+                        pathname={pathname}
+                    />
+                )}
+            </AnimatePresence>
         </div>
     );
 }
@@ -190,7 +213,6 @@ function ThemeToggle({ themeIndex, setThemeIndex }: { themeIndex: number, setThe
 
 function DropdownAccount() {
     const { data: session, status } = useSession();
-    const [isOpen, setIsOpen] = useState(false);
 
     if (status === "authenticated") {
         return (
@@ -208,45 +230,103 @@ function DropdownAccount() {
     }
 
     return (
-        <div className="relative">
-            <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="w-10 h-10 flex items-center justify-center rounded-full border border-[var(--theme-accent)]/25 text-[var(--theme-text)]/60 hover:text-[var(--theme-accent)] hover:border-[var(--theme-accent)]/60 hover:bg-[var(--theme-accent)]/8 transition-all duration-300"
-                aria-label="Menu compte"
-            >
-                <UserRound className="w-5 h-5" strokeWidth={1.5} />
-            </button>
+        <Link
+            href="/connexion"
+            className="w-10 h-10 flex items-center justify-center rounded-full border border-[var(--theme-accent)]/25 text-[var(--theme-text)]/60 hover:text-[var(--theme-accent)] hover:border-[var(--theme-accent)]/60 hover:bg-[var(--theme-accent)]/8 transition-all duration-300 shadow-sm"
+            aria-label="Connexion"
+        >
+            <UserRound className="w-5 h-5" strokeWidth={1.5} />
+        </Link>
+    );
+}
+function InstagramLink() {
+    return (
+        <Link
+            href="https://www.instagram.com/peguy.casteloot/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-10 h-10 flex items-center justify-center rounded-full border border-[var(--theme-accent)]/25 text-[var(--theme-text)]/60 hover:text-[#E1306C] hover:border-[#E1306C]/60 hover:bg-[#E1306C]/10 transition-all duration-300 shrink-0"
+            aria-label="Instagram Péguy Casteloot"
+        >
+            <Instagram className="w-5 h-5" />
+        </Link>
+    );
+}
 
-            <AnimatePresence>
-                {isOpen && (
-                    <>
-                        <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-                        <motion.div
-                            initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                            animate={{ opacity: 1, y: 0, scale: 1 }}
-                            exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                            className="absolute right-0 top-full mt-4 w-48 p-2 rounded-2xl glass-ovni border border-[var(--theme-accent)]/20 shadow-2xl z-50 overflow-hidden"
-                        >
-                            <Link
-                                href="/connexion"
-                                onClick={() => setIsOpen(false)}
-                                className="flex items-center gap-3 w-full px-4 py-3 rounded-xl hover:bg-[var(--theme-accent)]/10 text-sm font-sans transition-colors group"
-                            >
-                                <LogIn className="w-4 h-4 text-[var(--theme-text)]/40 group-hover:text-[var(--theme-accent)]" />
-                                <span className="text-[var(--theme-text)]/80 group-hover:text-[var(--theme-text)]">Se connecter</span>
-                            </Link>
-                            <Link
-                                href="/inscription"
-                                onClick={() => setIsOpen(false)}
-                                className="flex items-center gap-3 w-full px-4 py-3 rounded-xl hover:bg-[var(--theme-accent)]/10 text-sm font-sans transition-colors group"
-                            >
-                                <UserPlus className="w-4 h-4 text-[var(--theme-text)]/40 group-hover:text-[var(--theme-accent)]" />
-                                <span className="text-[var(--theme-text)]/80 group-hover:text-[var(--theme-text)]">S&apos;inscrire</span>
-                            </Link>
-                        </motion.div>
-                    </>
-                )}
-            </AnimatePresence>
+function MobileDrawer({ onClose, themeIndex, setThemeIndex, pathname }: { onClose: () => void, themeIndex: number, setThemeIndex: (val: number) => void, pathname: string }) {
+    return (
+        <div className="fixed inset-0 z-[200] lg:hidden pointer-events-auto">
+            {/* Backdrop */}
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                onClick={onClose}
+                className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            />
+
+            {/* Side Panel */}
+            <motion.div
+                initial={{ x: "100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "100%" }}
+                transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                className="absolute right-0 top-0 bottom-0 w-[85%] max-w-[400px] bg-[var(--theme-bg)]/95 backdrop-blur-3xl border-l border-[var(--theme-accent)]/20 shadow-2xl flex flex-col"
+            >
+                <div className="p-6 flex items-center justify-between border-b border-[var(--theme-accent)]/10">
+                    <span className="font-sans font-black tracking-tighter text-lg uppercase text-[var(--theme-accent)]">Menu</span>
+                    <button onClick={onClose} className="p-2 rounded-full bg-[var(--theme-accent)]/10 text-[var(--theme-accent)]">
+                        <X className="w-6 h-6" />
+                    </button>
+                </div>
+
+                <div className="flex-1 overflow-y-auto p-6 space-y-8 no-scrollbar">
+                    {/* Main Links */}
+                    <nav className="space-y-4">
+                        {tabs.map((tab) => {
+                            const isActive = pathname === tab.href;
+                            return (
+                                <Link
+                                    key={tab.id}
+                                    href={tab.href}
+                                    onClick={onClose}
+                                    className={`flex items-center gap-4 p-4 rounded-2xl transition-all duration-300 ${isActive ? 'bg-[var(--theme-accent)]/15 text-[var(--theme-accent)] font-bold' : 'hover:bg-[var(--theme-accent)]/5 opacity-70'}`}
+                                >
+                                    <div className={`p-2 rounded-lg ${isActive ? 'bg-[var(--theme-accent)] text-[var(--theme-bg)]' : 'bg-[var(--theme-accent)]/10'}`}>
+                                        {tab.icon}
+                                    </div>
+                                    <span className="text-lg">{tab.label}</span>
+                                </Link>
+                            );
+                        })}
+                    </nav>
+
+                    <div className="h-[1px] bg-[var(--theme-accent)]/10" />
+
+                    {/* Secondary Controls */}
+                    <div className="space-y-6">
+                        <div className="flex items-center justify-between px-2">
+                            <span className="text-sm font-bold uppercase tracking-widest opacity-40">Apparence</span>
+                            <ThemeToggle themeIndex={themeIndex} setThemeIndex={setThemeIndex} />
+                        </div>
+
+                        <div className="flex items-center justify-between px-2">
+                            <span className="text-sm font-bold uppercase tracking-widest opacity-40">Réseaux</span>
+                            <InstagramLink />
+                        </div>
+                    </div>
+                </div>
+
+                <div className="p-6 border-t border-[var(--theme-accent)]/10">
+                    <Link
+                        href="/reserver"
+                        onClick={onClose}
+                        className="w-full h-14 flex items-center justify-center rounded-2xl bg-[var(--theme-accent)] text-[var(--theme-bg)] font-sans font-black text-sm tracking-[0.2em] uppercase shadow-xl shadow-[var(--theme-accent)]/20 active:scale-95 transition-transform"
+                    >
+                        Prendre RDV
+                    </Link>
+                </div>
+            </motion.div>
         </div>
     );
 }

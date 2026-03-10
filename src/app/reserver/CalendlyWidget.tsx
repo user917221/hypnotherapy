@@ -20,10 +20,10 @@ export default function CalendlyWidget() {
     }
 
     return (
-        <div className="w-full h-[700px] rounded-2xl overflow-hidden relative">
+        <div className="w-full h-[700px] rounded-t-[2.25rem] rounded-b-[2.5rem] overflow-hidden relative border border-white/10 shadow-inner">
             <InlineWidget
                 // URL DE TEST : À REMPLACER PAR LE LIEN DE PÉGUY QUAND IL SERA FOURNI
-                url="https://calendly.com/calendly-sales/15min"
+                url="https://calendly.com/peguy-casteloot"
                 styles={{
                     height: "100%",
                     width: "100%",

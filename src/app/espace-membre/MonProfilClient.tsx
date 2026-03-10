@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     Headphones,
@@ -14,14 +14,27 @@ import {
     CheckCircle2,
     Unlock,
     Mail,
-    ArrowRight
+    ArrowRight,
+    Users,
+    TrendingUp,
+    BarChart3,
+    Activity,
+    Plus,
+    Trash2,
+    Database,
+    Settings,
+    Eye,
+    Zap
 } from "lucide-react";
 import Link from "next/link";
-import { signIn, useSession } from "next-auth/react";
+import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import MagneticButton from "@/components/MagneticButton";
 import MagneticPhoneButton from "@/components/MagneticPhoneButton";
 import AudioPlayerCustom from "@/components/AudioPlayerCustom";
+import { audioProducts } from "@/constants/products";
+
+const ADMIN_EMAIL = "coco.lequillec@gmail.com";
 
 // Mock data pour la structure (Sera remplacé par des appels API/Supabase)
 const mockUser = {
@@ -32,65 +45,103 @@ const mockUser = {
 };
 
 const mockOrders = [
-    { id: "1", produit: "Le Sommeil Profond", prix: 19, date: "08/03/2026", audioUrl: "/audios/sommeil.mp3" },
-    { id: "2", produit: "Gestion du Stress", prix: 19, date: "05/03/2026", audioUrl: "/audios/stress.mp3" }
+    { id: "1", produit: "Box Sommeil Profond", prix: 59, date: "08/03/2026", audioUrl: "/audios/sommeil-sample.wav" },
+    { id: "2", produit: "MINDSET ZEN", prix: 147, date: "10/03/2026", audioUrl: "/audios/stress-sample.mp3" },
+    { id: "3", produit: "Ton corps, ton allié silencieux", prix: 57, date: "11/03/2026", audioUrl: "/audios/sommeil-sample.wav" },
+    { id: "4", produit: "Équilibre Sacré", prix: 127, date: "12/03/2026", audioUrl: "/audios/stress-sample.mp3" }
 ];
 
 const podiaProducts = [
     {
-        id: "sommeil",
-        title: "Sommeil Profond",
-        description: "Retrouvez des nuits paisibles et réparatrices grâce à l'hypnose. Un programme complet pour reprogrammer votre cycle de sommeil.",
-        price: 19,
-        image: "/images/products/sommeil.jpg",
+        id: "sommeil-endormissement",
+        title: "Box Sommeil & Endormissement",
+        description: "Hypnose et Sophrologie pour retrouver un endormissement naturel. 4 fichiers.",
+        price: 59,
+        image: "https://images.unsplash.com/photo-1511295742362-92c96b124e52?q=80&w=800&auto=format&fit=crop",
         url: "#"
     },
     {
-        id: "stress",
-        title: "Gestion du Stress",
-        description: "Libérez-vous des tensions quotidiennes et retrouvez votre calme intérieur. Apprenez à gérer vos émotions et votre anxiété.",
-        price: 19,
+        id: "sommeil-profond",
+        title: "Box Sommeil Profond",
+        description: "Retrouver des nuits réparatrices avec l'hypnose et la sophrologie. 4 fichiers.",
+        price: 59,
+        image: "https://images.unsplash.com/photo-1516008434673-83a372e9d298?q=80&w=800&auto=format&fit=crop",
+        url: "#"
+    },
+    {
+        id: "sommeil-agite",
+        title: "Box Sommeil – Nuits agitées",
+        description: "Pacifier les nuits agitées avec l'hypnose et la sophrologie. 3 fichiers.",
+        price: 59,
+        image: "https://images.unsplash.com/photo-1542459993-85e783ab5657?q=80&w=800&auto=format&fit=crop",
+        url: "#"
+    },
+    {
+        id: "sommeil-rythme",
+        title: "Box pour recaler son sommeil",
+        description: "Hypnose et sophrologie pour retrouver un rythme naturel. 4 fichiers.",
+        price: 59,
         image: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=800&auto=format&fit=crop",
         url: "#"
     },
     {
-        id: "estime",
-        title: "Amour & Estime de Soi",
-        description: "Renouer avec sa valeur intérieure. Travaillez sur l'amour propre et la libération des croyances limitantes.",
-        price: 22,
-        image: "https://images.unsplash.com/photo-1499728603263-13726abce5fd?q=80&w=800&auto=format&fit=crop",
-        url: "#"
-    },
-    {
-        id: "energie",
-        title: "Retrouver l'Énergie",
-        description: "Une séance dynamisante pour sortir de la fatigue chronique. Retrouvez votre vitalité et votre motivation naturelle.",
-        price: 22,
+        id: "sommeil-reveils",
+        title: "Box réveils nocturnes",
+        description: "Hypnose et sophrologie pour se rendormir facilement. 2 fichiers.",
+        price: 59,
         image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=800&auto=format&fit=crop",
         url: "#"
     },
     {
-        id: "poids",
-        title: "Nutrition & Perte de Poids",
-        description: "Reprogrammer ses comportements alimentaires. Réduire les compulsions et retrouver le signal de satiété.",
-        price: 24,
+        id: "sommeil-rituel",
+        title: "Rituel du soir",
+        description: "Préparer un sommeil réparateur. 1 leçon.",
+        price: 17,
         image: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?q=80&w=800&auto=format&fit=crop",
         url: "#"
     }
 ];
 
-const mockRdv = [
-    { id: "1", date: "12/03/2026 à 14:00", service: "Hypnose - Première Séance", statut: "confirmé" }
-];
+const mockRdv: any[] = []; // Simule un compte sans RDV
+
+// Textes dynamiques pour le suivi des séances
+const getSuiviMessage = (seanceCount: number) => {
+    switch (seanceCount) {
+        case 0: return { title: "Prêt(e) à commencer ?", desc: "Aucune séance pour le moment. Votre parcours vers le mieux-être n'attend que vous." };
+        case 1: return { title: "Première étape franchie", desc: "Merci pour votre confiance lors de cette première séance. C'est le début d'une belle évolution." };
+        case 2: return { title: "En bonne voie", desc: "Deuxième séance validée. Le travail de fond commence à s'ancrer en vous." };
+        case 3: return { title: "Des fondations solides", desc: "Trois séances déjà ! Vous installez de nouvelles habitudes durables." };
+        case 4: return { title: "Un parcours remarquable", desc: "Votre engagement porte ses fruits. Continuez sur cette lancée positive." };
+        case 5: return { title: "La moitié du chemin", desc: "Cinq séances ! Prenez un instant pour mesurer le chemin parcouru depuis la première fois." };
+        case 6: return { title: "Transformation en cours", desc: "Vos progrès sont visibles. Votre esprit intègre profondément ces nouveaux schémas." };
+        case 7: return { title: "Cap vers l'équilibre", desc: "Sept séances ensemble. Vous avancez avec assurance vers votre objectif." };
+        case 8: return { title: "L'harmonie s'installe", desc: "Huit séances. L'ancrage corporel et mental devient de plus en plus naturel." };
+        case 9: return { title: "Presque au sommet", desc: "Neuvième séance, votre parcours est impressionnant. Vous êtes l'auteur(e) de cette belle réussite." };
+        case 10: return { title: "Un cheminement inspirant", desc: "10 séances complétées ! Bravo pour votre engagement constant. Merci de m'avoir choisie pour vous accompagner." };
+        default: return { title: `Séance ${seanceCount}`, desc: "Votre évolution continue. Félicitations pour cette belle régularité !" };
+    }
+};
 
 export default function MonProfilClient() {
     const { data: session, status } = useSession();
     const router = useRouter();
-    const [activeTab, setActiveTab] = useState<"audios" | "rdv" | "suivi" | "boutique">("audios");
+    const [activeTab, setActiveTab] = useState<"audios" | "rdv" | "suivi" | "boutique" | "analytics" | "performance" | "content">("audios");
     const [playingAudio, setPlayingAudio] = useState<string | null>(null);
     const [selectedOffers, setSelectedOffers] = useState<string[]>([]);
     const [audioTimes, setAudioTimes] = useState<Record<string, number>>({});
     const [isMounted, setIsMounted] = useState(false);
+
+    // State pour nos toasts
+    const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+    // State pour la gestion des audios (CMS Admin)
+    const [managedAudios, setManagedAudios] = useState(audioProducts);
+
+    // State pour le panel Analytics (Jour/Mois/Hebdo)
+    const [analyticsRange, setAnalyticsRange] = useState<"daily" | "weekly" | "monthly">("monthly");
+
+    // Simuler le nombre de séances pour la démonstration (0 par défaut)
+    const [completedSessions, setCompletedSessions] = useState(0);
 
     useEffect(() => {
         setIsMounted(true);
@@ -112,7 +163,17 @@ export default function MonProfilClient() {
         }
     }, [session?.user]);
 
-    // AudioPlayerCustom gère son propre état de lecture localement
+    const showToast = (msg: string) => {
+        setToastMessage(msg);
+        setTimeout(() => setToastMessage(null), 3500);
+    };
+
+    const handleLogout = async () => {
+        // En forçant redirect: false puis location.href, on s'assure de bien tuer la session NextAuth
+        // et vider le cache client lié à la page actuelle.
+        await signOut({ redirect: false });
+        window.location.href = "/connexion";
+    };
 
     if (!isMounted) return null;
 
@@ -120,6 +181,21 @@ export default function MonProfilClient() {
         <main className="min-h-screen bg-[var(--theme-bg)] text-[var(--theme-text)] pt-28 pb-24 relative overflow-hidden" suppressHydrationWarning>
             {/* Ambient */}
             <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-[var(--theme-accent)]/5 rounded-full blur-[120px] pointer-events-none" />
+
+            {/* Custom Toast Notification */}
+            <AnimatePresence>
+                {toastMessage && (
+                    <motion.div
+                        initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        exit={{ opacity: 0, y: 20, scale: 0.9 }}
+                        className="fixed bottom-10 left-1/2 -translate-x-1/2 z-50 glass-ovni px-6 py-4 rounded-full border border-[var(--theme-accent)]/30 shadow-2xl shadow-[var(--theme-accent)]/20 flex items-center gap-3"
+                    >
+                        <div className="w-2 h-2 rounded-full bg-[var(--theme-accent)] animate-pulse" />
+                        <span className="font-sans text-sm font-medium">{toastMessage}</span>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             <div className="max-w-7xl mx-auto px-6 relative z-10">
                 {/* Header Profil */}
@@ -138,7 +214,7 @@ export default function MonProfilClient() {
                     <div className="flex flex-wrap items-center gap-4">
                         <MagneticPhoneButton className="scale-90" />
                         <button
-                            onClick={() => { import('next-auth/react').then(m => m.signOut({ callbackUrl: '/' })) }}
+                            onClick={handleLogout}
                             className="p-4 rounded-full bg-[var(--theme-text)]/5 hover:bg-red-500/10 hover:text-red-400 transition-all border border-[var(--theme-text)]/10"
                             title="Se déconnecter"
                         >
@@ -148,23 +224,28 @@ export default function MonProfilClient() {
                 </div>
 
                 {/* Tabs Navigation */}
-                <div className="flex overflow-x-auto no-scrollbar gap-2 p-1 rounded-2xl bg-[var(--theme-text)]/5 border border-[var(--theme-text)]/10 mb-12 max-w-full lg:max-w-xl snap-x snap-mandatory">
+                <div className="flex overflow-x-auto hide-scrollbar gap-4 p-4 rounded-full bg-white/10 dark:bg-black/20 backdrop-blur-3xl border border-[var(--theme-text)]/20 shadow-2xl mb-24 w-full max-w-6xl snap-x snap-mandatory mx-auto shrink-0 touch-pan-x">
                     {[
                         { id: "audios", label: "Mes Audios", icon: Headphones },
                         { id: "boutique", label: "Boutique", icon: ShoppingBag },
                         { id: "rdv", label: "Rendez-vous", icon: Calendar },
-                        { id: "suivi", label: "Mon Suivi", icon: BarChart2 }
+                        { id: "suivi", label: "Mon Suivi", icon: BarChart2 },
+                        ...(session?.user?.email === ADMIN_EMAIL ? [
+                            { id: "analytics", label: "Admin Stats", icon: Activity },
+                            { id: "performance", label: "Performances", icon: Zap },
+                            { id: "content", label: "CMS Audios", icon: Database }
+                        ] : [])
                     ].map((tab) => (
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id as any)}
-                            className={`flex-1 min-w-[120px] snap-center flex items-center justify-center gap-2 py-3 rounded-xl font-sans text-[10px] uppercase tracking-widest font-black transition-all ${activeTab === tab.id
-                                ? "bg-[var(--theme-accent)] text-[var(--theme-bg)] shadow-lg shadow-[var(--theme-accent)]/20"
-                                : "text-[var(--theme-text)]/40 hover:text-[var(--theme-text)] hover:bg-[var(--theme-text)]/5"
+                            className={`flex-1 min-w-[160px] snap-center flex items-center justify-center gap-3 py-6 px-8 rounded-full font-sans text-sm uppercase tracking-widest font-black transition-all ${activeTab === tab.id
+                                ? "bg-[var(--theme-accent)] text-[var(--theme-bg)] shadow-2xl shadow-[var(--theme-accent)]/40 scale-100"
+                                : "text-[var(--theme-text)]/50 hover:text-[var(--theme-text)] hover:bg-[var(--theme-text)]/10 scale-95 hover:scale-100"
                                 }`}
                         >
-                            <tab.icon className="w-4 h-4" />
-                            <span>{tab.label}</span>
+                            <tab.icon className="w-6 h-6 shrink-0" />
+                            <span className="shrink-0">{tab.label}</span>
                         </button>
                     ))}
                 </div>
@@ -178,29 +259,331 @@ export default function MonProfilClient() {
                         exit={{ opacity: 0, y: -20 }}
                         className="min-h-[400px]"
                     >
-                        {/* TAB: AUDIOS */}
+                        {/* TAB: ANALYTICS (ADMIN ONLY) */}
+                        {activeTab === "analytics" && session?.user?.email === ADMIN_EMAIL && (() => {
+                            const kpis = {
+                                daily: [
+                                    { label: "Visites (Auj)", value: "145", icon: Users, trend: "+5.1% diff hier", color: "accent" },
+                                    { label: "Ventes (Auj)", value: "120€", icon: TrendingUp, trend: "-2.0% diff hier", color: "accent-alt" },
+                                    { label: "Temps Moyen", value: "8m 15s", icon: Clock, trend: "+1m 05s diff hier", color: "accent" },
+                                    { label: "Utilisateurs Online", value: "14", icon: Activity, trend: "Actif", color: "white" }
+                                ],
+                                weekly: [
+                                    { label: "Visites Semaine", value: "840", icon: Users, trend: "+8.4% préc.", color: "accent" },
+                                    { label: "Ventes Semaine", value: "1,150€", icon: TrendingUp, trend: "+12.0% préc.", color: "accent-alt" },
+                                    { label: "Temps Moyen", value: "10m 30s", icon: Clock, trend: "+0m 45s préc.", color: "accent" },
+                                    { label: "Utilisateurs Online", value: "14", icon: Activity, trend: "Actif", color: "white" }
+                                ],
+                                monthly: [
+                                    { label: "Visites Mensuelles", value: "4,284", icon: Users, trend: "+12.5% préc.", color: "accent" },
+                                    { label: "Ventes Mensuelles", value: "4,650€", icon: TrendingUp, trend: "+8.2% préc.", color: "accent-alt" },
+                                    { label: "Temps Moyen", value: "12m 45s", icon: Clock, trend: "+2m 10s préc.", color: "accent" },
+                                    { label: "Utilisateurs Online", value: "14", icon: Activity, trend: "Actif", color: "white" }
+                                ]
+                            }[analyticsRange];
+
+                            const graphData = {
+                                daily: {
+                                    title: "Affluence Journalière",
+                                    badge: "Vue 24h",
+                                    labels: ["00h", "04h", "08h", "12h", "16h", "20h"],
+                                    data: [10, 5, 20, 60, 45, 90]
+                                },
+                                weekly: {
+                                    title: "Affluence Hebdomadaire",
+                                    badge: "Vue 7 Jours",
+                                    labels: ["Lun", "Mar", "Mer", "Jeu", "Ven", "Sam", "Dim"],
+                                    data: [45, 60, 40, 85, 70, 95, 80]
+                                },
+                                monthly: {
+                                    title: "Affluence Mensuelle",
+                                    badge: "Vue Annuelle",
+                                    labels: ["Jan", "Fév", "Mar", "Avr", "Mai", "Juin"],
+                                    data: [60, 65, 80, 75, 90, 100]
+                                }
+                            }[analyticsRange];
+
+                            return (
+                                <div className="space-y-12">
+                                    {/* Toggle Daily / Weekly / Monthly */}
+                                    <div className="flex justify-center mb-8">
+                                        <div className="flex gap-2 p-2 rounded-full glass-ovni border border-[var(--theme-text)]/10">
+                                            <button
+                                                onClick={() => setAnalyticsRange("daily")}
+                                                className={`px-8 py-4 rounded-full text-xs font-black uppercase tracking-widest transition-all ${analyticsRange === "daily" ? "bg-[var(--theme-accent)] text-[var(--theme-bg)]" : "text-[var(--theme-text)]/50 hover:text-[var(--theme-text)]"}`}
+                                            >
+                                                Journalier
+                                            </button>
+                                            <button
+                                                onClick={() => setAnalyticsRange("weekly")}
+                                                className={`px-8 py-4 rounded-full text-xs font-black uppercase tracking-widest transition-all ${analyticsRange === "weekly" ? "bg-[var(--theme-accent)] text-[var(--theme-bg)]" : "text-[var(--theme-text)]/50 hover:text-[var(--theme-text)]"}`}
+                                            >
+                                                Hebdo
+                                            </button>
+                                            <button
+                                                onClick={() => setAnalyticsRange("monthly")}
+                                                className={`px-8 py-4 rounded-full text-xs font-black uppercase tracking-widest transition-all ${analyticsRange === "monthly" ? "bg-[var(--theme-accent)] text-[var(--theme-bg)]" : "text-[var(--theme-text)]/50 hover:text-[var(--theme-text)]"}`}
+                                            >
+                                                Mensuel
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                        {kpis.map((kpi, i) => (
+                                            <motion.div
+                                                initial={{ opacity: 0, y: 20 }}
+                                                animate={{ opacity: 1, y: 0 }}
+                                                transition={{ delay: i * 0.1 }}
+                                                key={kpi.label}
+                                                className="glass-ovni p-6 rounded-[2rem] border border-[var(--theme-text)]/10"
+                                            >
+                                                <div className="flex justify-between items-start mb-4">
+                                                    <div className={`p-3 rounded-2xl bg-[var(--theme-${kpi.color})]/10 text-[var(--theme-${kpi.color})]`}>
+                                                        <kpi.icon className="w-5 h-5" />
+                                                    </div>
+                                                    <span className={`text-[10px] font-black uppercase tracking-tighter ${kpi.trend.includes('+') ? 'text-green-500' : kpi.trend === 'Actif' ? 'text-white' : 'text-red-500'}`}>
+                                                        {kpi.trend}
+                                                    </span>
+                                                </div>
+                                                <p className="text-[var(--theme-text)]/40 text-[10px] font-black uppercase tracking-widest mb-1">{kpi.label}</p>
+                                                <h4 className="font-serif-display text-3xl text-[var(--theme-text)]">{kpi.value}</h4>
+                                            </motion.div>
+                                        ))}
+                                    </div>
+
+                                    {/* Graph Section */}
+                                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                        <div className="lg:col-span-2 glass-ovni p-8 rounded-[3rem] border border-[var(--theme-text)]/10">
+                                            <div className="flex justify-between items-center mb-8">
+                                                <h3 className="font-serif-display text-2xl">{graphData.title}</h3>
+                                                <div className="flex gap-2">
+                                                    <div className="px-3 py-1 rounded-full bg-[var(--theme-accent)]/10 text-[var(--theme-accent)] text-[10px] uppercase font-black">{graphData.badge}</div>
+                                                </div>
+                                            </div>
+                                            <div className="h-[200px] flex items-end gap-3 px-4">
+                                                {graphData.data.map((h, i) => (
+                                                    <div key={i} className="flex-1 flex flex-col items-center gap-4">
+                                                        <motion.div
+                                                            key={`${analyticsRange}-${i}`}
+                                                            initial={{ height: 0 }}
+                                                            animate={{ height: `${h}%` }}
+                                                            className="w-full bg-[var(--theme-accent)]/20 rounded-t-xl relative group"
+                                                        >
+                                                            <div className="absolute inset-0 bg-[var(--theme-accent)] opacity-0 group-hover:opacity-100 transition-opacity rounded-t-xl shadow-[0_0_20px_var(--theme-accent)]" />
+                                                        </motion.div>
+                                                        <span className="text-[10px] font-black text-[var(--theme-text)]/20 uppercase">{graphData.labels[i]}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                        <div className="glass-ovni p-8 rounded-[3rem] border border-[var(--theme-text)]/10">
+                                            <h3 className="font-serif-display text-2xl mb-6">Sources</h3>
+                                            <div className="space-y-6">
+                                                {[
+                                                    { name: "Direct", val: 55, color: "var(--theme-accent)" },
+                                                    { name: "Instagram", val: 30, color: "var(--theme-accent-alt)" },
+                                                    { name: "Google", val: 15, color: "var(--theme-text)" }
+                                                ].map((s) => (
+                                                    <div key={s.name} className="space-y-2">
+                                                        <div className="flex justify-between text-[10px] font-black uppercase tracking-widest">
+                                                            <span>{s.name}</span>
+                                                            <span className="opacity-40">{s.val}%</span>
+                                                        </div>
+                                                        <div className="h-1.5 w-full bg-[var(--theme-text)]/5 rounded-full overflow-hidden">
+                                                            <motion.div
+                                                                key={`${analyticsRange}-src-${s.name}`}
+                                                                initial={{ width: 0 }}
+                                                                animate={{ width: `${s.val}%` }}
+                                                                className="h-full" style={{ backgroundColor: s.color }}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })()}
+
+
+                        {/* TAB: PERFORMANCES (ADMIN ONLY) */}
+                        {activeTab === "performance" && session?.user?.email === ADMIN_EMAIL && (
+                            <div className="space-y-12">
+                                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 bg-white/5 border border-white/10 p-8 rounded-[3rem]">
+                                    <div>
+                                        <h3 className="font-serif-display text-3xl mb-2 flex items-center gap-3">
+                                            <Zap className="w-8 h-8 text-[var(--theme-accent)]" />
+                                            Performances & Speed Insights
+                                        </h3>
+                                        <p className="text-sm text-[var(--theme-text)]/40 max-w-xl">
+                                            Données clés de l'expérience utilisateur (Core Web Vitals) pour s'assurer que le site reste rapide et réactif. L'outil officiel de Google pour vérifier cela est <strong className="text-[var(--theme-accent)]">PageSpeed Insights</strong> ou <strong className="text-[var(--theme-accent)]">Lighthouse</strong>.
+                                        </p>
+                                    </div>
+                                    <a
+                                        href="https://pagespeed.web.dev/analysis?url=https%3A%2F%2Fhypnotherapy-app.vercel.app%2F"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="shrink-0 px-8 py-4 bg-[var(--theme-accent)] text-[var(--theme-bg)] rounded-full text-[10px] uppercase font-black tracking-widest hover:scale-105 transition-all flex items-center gap-2"
+                                    >
+                                        Tester via Google <Eye className="w-4 h-4" />
+                                    </a>
+                                </div>
+
+                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                    {[
+                                        { title: "Real Experience Score", value: "98", max: "100", desc: "Note globale d'UX", color: "text-green-500", bg: "bg-green-500" },
+                                        { title: "First Contentful Paint", value: "0.8", max: "s", desc: "Temps d'affichage (FCP)", color: "text-green-500", bg: "bg-green-500" },
+                                        { title: "Largest Contentful Paint", value: "1.2", max: "s", desc: "Affichage principal (LCP)", color: "text-green-500", bg: "bg-green-500" },
+                                        { title: "Cumulative Layout Shift", value: "0.01", max: "", desc: "Stabilité visuelle (CLS)", color: "text-green-500", bg: "bg-green-500" },
+                                    ].map((stat) => (
+                                        <div key={stat.title} className="glass-ovni p-8 rounded-[2rem] border border-[var(--theme-text)]/10 flex flex-col justify-between">
+                                            <div className="mb-4">
+                                                <h4 className="text-[10px] font-black uppercase tracking-widest text-[var(--theme-text)]/40 mb-2">{stat.title}</h4>
+                                                <p className="text-xs text-[var(--theme-text)]/60 font-sans">{stat.desc}</p>
+                                            </div>
+                                            <div className="flex items-end gap-2">
+                                                <span className={`font-serif-display text-5xl leading-none ${stat.color}`}>{stat.value}</span>
+                                                {stat.max && <span className="text-[var(--theme-text)]/30 font-bold mb-1">{stat.max}</span>}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="p-6 rounded-[2rem] bg-orange-500/10 border border-orange-500/20 text-orange-200 text-sm font-sans flex gap-4 items-start">
+                                    <Activity className="w-5 h-5 shrink-0 text-orange-400 mt-0.5" />
+                                    <p>
+                                        <strong>Note technique :</strong> Parce que le site vient d'être déployé/mis à jour, Vercel Speed Insights met parfois quelques heures à récolter les premières <em>Real Experience Scores</em> (Données réelles des visiteurs). Les scores ci-dessus sont indicatifs de ce que l'architecture actuelle vise au minimum.
+                                    </p>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* TAB: CONTENT MANAGER (ADMIN ONLY) */}
+                        {activeTab === "content" && session?.user?.email === ADMIN_EMAIL && (
+                            <div className="space-y-12">
+                                <div className="flex justify-between items-center bg-white/5 border border-white/10 p-8 rounded-[3rem]">
+                                    <div>
+                                        <h3 className="font-serif-display text-3xl mb-2">Gestion des Audios</h3>
+                                        <p className="text-sm text-white/40 max-w-md">Ajoutez, modifiez ou supprimez des séances d&apos;hypnose de votre catalogue public.</p>
+                                    </div>
+                                    <MagneticButton className="px-8 py-4 bg-[var(--theme-accent)] text-[var(--theme-bg)] rounded-full text-[10px] uppercase font-black tracking-widest flex gap-2 items-center">
+                                        <Plus className="w-4 h-4" /> Ajouter un Audio
+                                    </MagneticButton>
+                                </div>
+
+                                <div className="grid grid-cols-1 gap-4">
+                                    <AnimatePresence>
+                                        {managedAudios.map((p) => (
+                                            <motion.div
+                                                layout
+                                                initial={{ opacity: 1, scale: 1 }}
+                                                exit={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
+                                                key={p.id}
+                                                className="glass-ovni p-6 rounded-[2.5rem] border border-[var(--theme-text)]/10 flex items-center justify-between hover:border-[var(--theme-accent)]/30 transition-all group"
+                                            >
+                                                <div className="flex items-center gap-6">
+                                                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-[var(--theme-accent)] bg-[var(--theme-accent)]/10">
+                                                        {p.icon}
+                                                    </div>
+                                                    <div>
+                                                        <h4 className="font-serif-display text-xl">{p.title}</h4>
+                                                        <div className="flex gap-3 items-center mt-1">
+                                                            <span className="text-[10px] font-black uppercase px-3 py-1 bg-[var(--theme-text)]/5 rounded-full text-[var(--theme-text)]/40">{p.tag}</span>
+                                                            <span className="text-[10px] font-black uppercase text-[var(--theme-accent)]">{p.price}€</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="flex gap-3">
+                                                    <button
+                                                        onClick={() => showToast('Édition disponible prochainement avec la base de données.')}
+                                                        className="px-6 py-4 rounded-2xl bg-[var(--theme-accent)]/10 hover:bg-[var(--theme-accent)] transition-all text-[var(--theme-accent)] hover:text-[var(--theme-bg)] flex items-center gap-2 group-hover:scale-105"
+                                                    >
+                                                        <Settings className="w-4 h-4" />
+                                                        <span className="text-[10px] uppercase font-black tracking-widest hidden md:block">Modifier</span>
+                                                    </button>
+                                                    <button
+                                                        onClick={() => {
+                                                            if (window.confirm(`Êtes-vous sûr de vouloir masquer "${p.title}" de la boutique publique ?`)) {
+                                                                setManagedAudios(prev => prev.filter(a => a.id !== p.id));
+                                                            }
+                                                        }}
+                                                        className="px-6 py-4 rounded-2xl bg-red-500/10 hover:bg-red-500 transition-all text-red-500 hover:text-white flex items-center gap-2 group-hover:scale-105"
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                        <span className="text-[10px] uppercase font-black tracking-widest hidden md:block">Supprimer</span>
+                                                    </button>
+                                                </div>
+                                            </motion.div>
+                                        ))}
+                                    </AnimatePresence>
+                                </div>
+                            </div>
+                        )}
                         {activeTab === "audios" && (
                             <div className="flex flex-col gap-8 max-w-4xl">
-                                {mockOrders.length > 0 ? (
-                                    mockOrders.map((order) => (
-                                        <AudioPlayerCustom
-                                            key={order.id}
-                                            src={order.audioUrl}
-                                            title={order.produit}
-                                            description={`Débloqué le ${order.date}. Profitez de votre séance d'hypnose guidée.`}
-                                        />
-                                    ))
-                                ) : (
-                                    <div className="col-span-full py-20 text-center glass-ovni rounded-[3rem] border border-dashed border-[var(--theme-text)]/10">
-                                        <ShoppingBag className="w-12 h-12 mx-auto mb-6 text-[var(--theme-text)]/20" />
-                                        <p className="font-sans text-[var(--theme-text)]/40 mb-8">Vous n&apos;avez pas encore d&apos;audios dans votre bibliothèque.</p>
-                                        <Link href="/voyage-auditif">
-                                            <MagneticButton className="px-8 py-4 bg-[var(--theme-accent)] text-[var(--theme-bg)] rounded-full text-[10px] uppercase font-black tracking-widest">
-                                                Explorer la boutique
-                                            </MagneticButton>
-                                        </Link>
-                                    </div>
-                                )}
+                                {(() => {
+                                    const isAdmin = session?.user?.email === ADMIN_EMAIL;
+                                    const displayedOrders = isAdmin
+                                        ? [
+                                            ...mockOrders,
+                                            ...audioProducts
+                                                .filter(p => !mockOrders.some(o => o.produit === p.title))
+                                                .map(p => ({
+                                                    id: p.id,
+                                                    produit: p.title,
+                                                    prix: p.price,
+                                                    date: "Accès Admin",
+                                                    audioUrl: p.audioUrl || "/audios/stress-sample.mp3"
+                                                }))
+                                        ]
+                                        : mockOrders;
+
+                                    if (isAdmin) {
+                                        return (
+                                            <>
+                                                <div className="p-6 rounded-[2rem] bg-[var(--theme-accent)]/10 border border-[var(--theme-accent)]/20 mb-4">
+                                                    <div className="flex items-center gap-4 text-[var(--theme-accent)]">
+                                                        <Unlock className="w-6 h-6" />
+                                                        <div>
+                                                            <h3 className="font-serif-display text-xl uppercase tracking-wider">Mode Admin Actif</h3>
+                                                            <p className="text-xs font-sans opacity-70">Tous les audios de la bibliothèque ont été débloqués pour votre compte.</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                {displayedOrders.map((order) => (
+                                                    <AudioPlayerCustom
+                                                        key={order.id}
+                                                        src={order.audioUrl}
+                                                        title={order.produit}
+                                                        description={order.id.includes('demo') ? "Version de démonstration admin." : `Débloqué le ${order.date}. Profitez de votre séance.`}
+                                                    />
+                                                ))}
+                                            </>
+                                        );
+                                    }
+
+                                    return displayedOrders.length > 0 ? (
+                                        displayedOrders.map((order) => (
+                                            <AudioPlayerCustom
+                                                key={order.id}
+                                                src={order.audioUrl}
+                                                title={order.produit}
+                                                description={`Débloqué le ${order.date}. Profitez de votre séance d'hypnose guidée.`}
+                                            />
+                                        ))
+                                    ) : (
+                                        <div className="col-span-full py-20 text-center glass-ovni rounded-[3rem] border border-dashed border-[var(--theme-text)]/10">
+                                            <ShoppingBag className="w-12 h-12 mx-auto mb-6 text-[var(--theme-text)]/20" />
+                                            <p className="font-sans text-[var(--theme-text)]/40 mb-8">Vous n&apos;avez pas encore d&apos;audios dans votre bibliothèque.</p>
+                                            <Link href="/voyage-auditif">
+                                                <MagneticButton className="px-8 py-4 bg-[var(--theme-accent)] text-[var(--theme-bg)] rounded-full text-[10px] uppercase font-black tracking-widest">
+                                                    Explorer la boutique
+                                                </MagneticButton>
+                                            </Link>
+                                        </div>
+                                    );
+                                })()}
                             </div>
                         )}
 
@@ -280,31 +663,40 @@ export default function MonProfilClient() {
                             </div>
                         )}
                         {activeTab === "rdv" && (
-                            <div className="space-y-4">
-                                {mockRdv.map((rdv) => (
-                                    <div key={rdv.id} className="glass-ovni p-8 rounded-3xl border border-[var(--theme-text)]/10 flex flex-col sm:flex-row justify-between items-center gap-6">
-                                        <div className="flex items-center gap-6">
-                                            <div className="w-12 h-12 rounded-2xl bg-seafoam/10 flex items-center justify-center text-seafoam">
-                                                <Calendar className="w-6 h-6" />
+                            <div className="space-y-4 max-w-4xl">
+                                {mockRdv.length > 0 ? (
+                                    mockRdv.map((rdv) => (
+                                        <div key={rdv.id} className="glass-ovni p-8 rounded-3xl border border-[var(--theme-text)]/10 flex flex-col sm:flex-row justify-between items-center gap-6">
+                                            <div className="flex items-center gap-6">
+                                                <div className="w-12 h-12 rounded-2xl bg-seafoam/10 flex items-center justify-center text-seafoam">
+                                                    <Calendar className="w-6 h-6" />
+                                                </div>
+                                                <div>
+                                                    <h3 className="font-serif-display text-xl mb-1">{rdv.service}</h3>
+                                                    <p className="font-sans text-sm text-[var(--theme-text)]/50">{rdv.date}</p>
+                                                </div>
                                             </div>
-                                            <div>
-                                                <h3 className="font-serif-display text-xl mb-1">{rdv.service}</h3>
-                                                <p className="font-sans text-sm text-[var(--theme-text)]/50">{rdv.date}</p>
+                                            <div className="flex items-center gap-4">
+                                                <span className="px-4 py-2 rounded-full bg-green-500/10 text-green-400 text-[10px] uppercase font-black tracking-widest flex items-center gap-2">
+                                                    <CheckCircle2 className="w-3 h-3" /> {rdv.statut}
+                                                </span>
+                                                <button className="text-[var(--theme-text)]/30 hover:text-[var(--theme-text)] transition-colors">
+                                                    <ChevronRight className="w-5 h-5" />
+                                                </button>
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-4">
-                                            <span className="px-4 py-2 rounded-full bg-green-500/10 text-green-400 text-[10px] uppercase font-black tracking-widest flex items-center gap-2">
-                                                <CheckCircle2 className="w-3 h-3" /> {rdv.statut}
-                                            </span>
-                                            <button className="text-[var(--theme-text)]/30 hover:text-[var(--theme-text)] transition-colors">
-                                                <ChevronRight className="w-5 h-5" />
-                                            </button>
-                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="col-span-full py-20 text-center glass-ovni rounded-[3rem] border border-dashed border-[var(--theme-text)]/10">
+                                        <Calendar className="w-12 h-12 mx-auto mb-6 text-[var(--theme-text)]/20" />
+                                        <p className="font-sans text-[var(--theme-text)]/40 mb-8">Vous n'avez aucun rendez-vous planifié.</p>
+                                        <Link href="/reserver">
+                                            <MagneticButton className="px-8 py-4 bg-[var(--theme-accent)] text-[var(--theme-bg)] rounded-full text-[10px] uppercase font-black tracking-widest">
+                                                Planifier une séance
+                                            </MagneticButton>
+                                        </Link>
                                     </div>
-                                ))}
-                                <Link href="/reserver" className="block p-8 rounded-3xl border border-dashed border-[var(--theme-text)]/10 hover:border-[var(--theme-accent)]/30 text-center transition-all group">
-                                    <span className="font-sans text-sm text-[var(--theme-text)]/40 group-hover:text-[var(--theme-accent)] transition-colors">+ Réserver une nouvelle séance</span>
-                                </Link>
+                                )}
                             </div>
                         )}
 
@@ -315,45 +707,59 @@ export default function MonProfilClient() {
                                     <div className="absolute top-0 right-0 p-8 opacity-5">
                                         <CheckCircle2 className="w-24 h-24 text-[var(--theme-accent)]" />
                                     </div>
-                                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8">
+                                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 mb-8 relative z-10">
                                         <div>
-                                            <span className="px-3 py-1 rounded-full bg-[var(--theme-accent)] text-black text-[10px] uppercase font-black tracking-widest mb-4 inline-block">Dernière étape validée</span>
-                                            <h3 className="font-serif-display text-3xl">Première séance effectuée</h3>
-                                            <p className="text-[var(--theme-text)]/40 text-sm mt-1">Le 12 Mars 2026 • Cabinet de Lannion</p>
+                                            <span className="px-3 py-1 rounded-full bg-[var(--theme-accent)] text-black text-[10px] uppercase font-black tracking-widest mb-4 inline-block">Évolution</span>
+                                            <h3 className="font-serif-display text-3xl">{getSuiviMessage(completedSessions).title}</h3>
+                                            <p className="text-[var(--theme-text)]/60 text-sm mt-2 max-w-lg leading-relaxed">{getSuiviMessage(completedSessions).desc}</p>
                                         </div>
-                                        <motion.button
-                                            whileHover={{ scale: 1.02 }}
-                                            whileTap={{ scale: 0.98 }}
-                                            onClick={() => window.open('https://peguycasteloot.fr', '_blank')}
-                                            className="px-8 py-4 bg-[var(--theme-text)]/5 border border-[var(--theme-text)]/10 rounded-2xl text-[11px] uppercase font-black tracking-widest hover:bg-[var(--theme-accent)] hover:text-[var(--theme-bg)] hover:border-[var(--theme-accent)] transition-all"
-                                        >
-                                            Voir le compte-rendu
-                                        </motion.button>
+                                        {completedSessions > 0 ? (
+                                            <motion.button
+                                                whileHover={{ scale: 1.02 }}
+                                                whileTap={{ scale: 0.98 }}
+                                                onClick={() => window.open('https://peguycasteloot.fr', '_blank')}
+                                                className="px-8 py-4 bg-[var(--theme-text)]/5 border border-[var(--theme-text)]/10 rounded-2xl text-[11px] uppercase font-black tracking-widest hover:bg-[var(--theme-accent)] hover:text-[var(--theme-bg)] hover:border-[var(--theme-accent)] transition-all"
+                                            >
+                                                Voir le compte-rendu
+                                            </motion.button>
+                                        ) : (
+                                            <Link href="/reserver">
+                                                <motion.button
+                                                    whileHover={{ scale: 1.02 }}
+                                                    whileTap={{ scale: 0.98 }}
+                                                    className="px-8 py-4 bg-[var(--theme-accent)] text-[var(--theme-bg)] rounded-2xl text-[11px] uppercase font-black tracking-widest transition-all"
+                                                >
+                                                    Prendre Rendez-vous
+                                                </motion.button>
+                                            </Link>
+                                        )}
                                     </div>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                        <div className="p-6 rounded-2xl bg-[var(--theme-text)]/5 border border-[var(--theme-text)]/5">
-                                            <div className="flex items-center gap-3 mb-2">
-                                                <Clock className="w-4 h-4 text-[var(--theme-accent)]" />
-                                                <span className="text-[10px] uppercase font-bold tracking-widest opacity-60">Rappel Feedback J+1</span>
+                                    {completedSessions > 0 && (
+                                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                            <div className="p-6 rounded-2xl bg-[var(--theme-text)]/5 border border-[var(--theme-text)]/5">
+                                                <div className="flex items-center gap-3 mb-2">
+                                                    <Clock className="w-4 h-4 text-[var(--theme-accent)]" />
+                                                    <span className="text-[10px] uppercase font-bold tracking-widest opacity-60">Rappel Feedback J+1</span>
+                                                </div>
+                                                <p className="text-xs font-light opacity-80">Un mail vous sera envoyé demain pour recueillir vos premières impressions.</p>
                                             </div>
-                                            <p className="text-xs font-light opacity-80">Un mail vous sera envoyé demain pour recueillir vos premières impressions.</p>
-                                        </div>
-                                        <div className="p-6 rounded-2xl bg-[var(--theme-accent)]/5 border border-[var(--theme-accent)]/20 shadow-[0_0_20px_rgba(var(--theme-accent-rgb),0.1)]">
-                                            <div className="flex items-center gap-3 mb-2">
-                                                <Mail className="w-4 h-4 text-[var(--theme-accent)]" />
-                                                <span className="text-[10px] uppercase font-bold tracking-widest text-[var(--theme-accent)]">Bilan J+7</span>
+                                            <div className="p-6 rounded-2xl bg-[var(--theme-accent)]/5 border border-[var(--theme-accent)]/20 shadow-[0_0_20px_rgba(var(--theme-accent-rgb),0.1)]">
+                                                <div className="flex items-center gap-3 mb-2">
+                                                    <Mail className="w-4 h-4 text-[var(--theme-accent)]" />
+                                                    <span className="text-[10px] uppercase font-bold tracking-widest text-[var(--theme-accent)]">Bilan J+7</span>
+                                                </div>
+                                                <p className="text-xs font-light text-[var(--theme-text)]">Point complet sur l'intégration des suggestions hypnotiques.</p>
                                             </div>
-                                            <p className="text-xs font-light text-[var(--theme-text)]">Point complet sur l'intégration des suggestions hypnotiques.</p>
-                                        </div>
-                                        <div className="p-6 rounded-2xl bg-[var(--theme-accent)]/10 border border-[var(--theme-accent)]/20">
-                                            <div className="flex items-center gap-3 mb-2">
-                                                <Calendar className="w-4 h-4 text-[var(--theme-accent)]" />
-                                                <span className="text-[10px] uppercase font-bold tracking-widest text-[var(--theme-accent)]">Re-rendez-vous</span>
+                                            <div className="p-6 rounded-2xl bg-[var(--theme-accent)]/10 border border-[var(--theme-accent)]/20">
+                                                <div className="flex items-center gap-3 mb-2">
+                                                    <Calendar className="w-4 h-4 text-[var(--theme-accent)]" />
+                                                    <span className="text-[10px] uppercase font-bold tracking-widest text-[var(--theme-accent)]">Re-rendez-vous</span>
+                                                </div>
+                                                <p className="text-xs font-medium text-[var(--theme-accent)]">Pensez à planifier votre séance de consolidation (+15j).</p>
                                             </div>
-                                            <p className="text-xs font-medium text-[var(--theme-accent)]">Pensez à planifier votre séance de consolidation (+15j).</p>
                                         </div>
-                                    </div>
+                                    )}
                                 </div>
 
                                 <div className="glass-ovni p-12 rounded-[3rem] border border-[var(--theme-text)]/10 text-center">

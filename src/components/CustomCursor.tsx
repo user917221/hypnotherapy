@@ -45,7 +45,7 @@ export default function CustomCursor() {
         };
     }, [cursorX, cursorY]);
 
-    // Si on est sur mobile/touch, on ne rend rien
+    // Si on est sur mobile/touch, on ne rend rien du tout
     if (typeof window !== 'undefined' && window.matchMedia("(pointer: coarse)").matches) {
         return null;
     }

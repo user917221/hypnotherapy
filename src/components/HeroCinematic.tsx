@@ -39,8 +39,22 @@ export default function HeroCinematic() {
 
     return (
         <section ref={container} className="relative h-[110vh] flex items-center justify-center overflow-hidden bg-teal-deep">
-            {/* Animated Ambient Background */}
-            <div className="absolute inset-0 z-0 overflow-hidden bg-[var(--theme-bg)]">
+            {/* Background Image Optimized for LCP */}
+            <div className="absolute inset-0 z-0">
+                <Image
+                    src="/hero_bg.png"
+                    alt="Background"
+                    fill
+                    priority
+                    className="hero-bg object-cover"
+                    sizes="100vw"
+                    quality={90}
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-teal-deep/20 via-teal-deep/40 to-teal-deep pointer-events-none" />
+            </div>
+
+            {/* Animated Ambient Background (kept but behind the main image for depth) */}
+            <div className="absolute inset-0 z-0 overflow-hidden opacity-30">
                 <motion.div
                     className="absolute -top-[20%] -left-[10%] w-[70vw] h-[70vw] rounded-full mix-blend-screen filter blur-[100px] opacity-40 pointer-events-none"
                     style={{ background: 'radial-gradient(circle, var(--theme-accent) 0%, transparent 70%)' }}
@@ -106,12 +120,12 @@ export default function HeroCinematic() {
                     <h1 className="flex flex-col gap-2 relative z-20">
                         <KineticText
                             text="Péguy Casteloot"
-                            delay={1.5}
+                            delay={0.5}
                             className="block font-serif-display text-7xl md:text-[10vw] text-mint-cream leading-[0.85] tracking-tighter"
                         />
                         <KineticText
                             text="Le Dialogue avec l'Inconscient"
-                            delay={2}
+                            delay={0.8}
                             className="block font-serif-display italic text-4xl md:text-7xl text-seafoam leading-none mt-4 text-glow-seafoam"
                         />
                     </h1>

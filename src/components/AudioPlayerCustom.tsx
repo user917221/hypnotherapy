@@ -18,29 +18,42 @@ export default function AudioPlayerCustom({ src, title, description, coverImage 
     const [duration, setDuration] = useState(0);
     const [volume, setVolume] = useState(0.8);
 
-    useEffect(() => {
-        const audio = audioRef.current;
-        if (!audio) return;
+    // React gère mieux les events via onTimeUpdate et onLoadedMetadata
+    const handleTimeUpdate = () => {
+        if (audioRef.current) {
+            setCurrentTime(audioRef.current.currentTime);
+            // Fallback pour la durée si preload n'a pas trigger
+            if (duration === 0 && audioRef.current.duration && !isNaN(audioRef.current.duration) && isFinite(audioRef.current.duration)) {
+                setDuration(audioRef.current.duration);
+            }
+        }
+    };
 
-        const updateTime = () => setCurrentTime(audio.currentTime);
-        const updateDuration = () => setDuration(audio.duration);
-
-        audio.addEventListener("timeupdate", updateTime);
-        audio.addEventListener("loadedmetadata", updateDuration);
-
-        return () => {
-            audio.removeEventListener("timeupdate", updateTime);
-            audio.removeEventListener("loadedmetadata", updateDuration);
-        };
-    }, []);
+    const handleLoadedMetadata = () => {
+        if (audioRef.current && audioRef.current.duration && !isNaN(audioRef.current.duration) && isFinite(audioRef.current.duration)) {
+            setDuration(audioRef.current.duration);
+        }
+    };
 
     const togglePlay = () => {
+        if (!audioRef.current) return;
+
         if (isPlaying) {
-            audioRef.current?.pause();
+            audioRef.current.pause();
+            setIsPlaying(false);
         } else {
-            audioRef.current?.play();
+            const playPromise = audioRef.current.play();
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    setIsPlaying(true);
+                }).catch(error => {
+                    console.error("Erreur de lecture audio:", error);
+                    setIsPlaying(false);
+                });
+            } else {
+                setIsPlaying(true);
+            }
         }
-        setIsPlaying(!isPlaying);
     };
 
     const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,6 +63,7 @@ export default function AudioPlayerCustom({ src, title, description, coverImage 
     };
 
     const formatTime = (time: number) => {
+        if (isNaN(time) || !isFinite(time)) return "0:00";
         const mins = Math.floor(time / 60);
         const secs = Math.floor(time % 60);
         return `${mins}:${secs.toString().padStart(2, "0")}`;
@@ -60,7 +74,15 @@ export default function AudioPlayerCustom({ src, title, description, coverImage 
             {/* Background Accent */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-[var(--theme-accent)]/10 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
 
-            <audio ref={audioRef} src={src} />
+            <audio
+                ref={audioRef}
+                src={src}
+                preload="metadata"
+                onEnded={() => setIsPlaying(false)}
+                onTimeUpdate={handleTimeUpdate}
+                onLoadedMetadata={handleLoadedMetadata}
+            />
+
 
             <div className="flex flex-col md:flex-row gap-8 items-center relative z-10">
                 {/* Cover Image Placeholder */}

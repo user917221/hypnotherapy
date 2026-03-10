@@ -93,9 +93,9 @@ export default function HypnoseProgress() {
                     />
                 </div>
 
-                <div className="max-w-7xl mx-auto px-6 w-full relative z-10 -translate-y-20">
+                <div className="max-w-7xl mx-auto px-6 w-full relative z-10 md:-translate-y-10">
                     {/* Header */}
-                    <div className="mb-20">
+                    <div className="mb-8 md:mb-16">
                         <motion.span
                             initial={{ opacity: 0, y: 10 }}
                             whileInView={{ opacity: 1, y: 0 }}
@@ -109,7 +109,7 @@ export default function HypnoseProgress() {
                     </div>
 
                     {/* Progress Bar Container */}
-                    <div className="relative h-20 mb-12 flex items-center">
+                    <div className="relative h-16 md:h-20 mb-8 md:mb-12 flex items-center">
                         {/* Static Track */}
                         <div className="absolute top-1/2 -translate-y-1/2 left-0 w-full h-1 bg-[var(--theme-text)]/5 rounded-full" />
 
@@ -151,7 +151,7 @@ export default function HypnoseProgress() {
                     </div>
 
                     {/* Active Content Display */}
-                    <div className="relative h-[400px]">
+                    <div className="relative h-[480px] md:h-[400px]">
                         <AnimatePresence mode="wait">
                             <motion.div
                                 key={activeStep}
@@ -159,10 +159,10 @@ export default function HypnoseProgress() {
                                 animate={{ opacity: 1, x: 0, filter: "blur(0px)" }}
                                 exit={{ opacity: 0, x: -20, filter: "blur(10px)" }}
                                 transition={{ duration: 0.6, ease: "circOut" }}
-                                className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
+                                className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 items-center"
                             >
                                 {/* Content Card */}
-                                <div className="glass-ovni p-8 md:p-12 rounded-[3.5rem] border border-[var(--theme-text)]/10 shadow-2xl relative overflow-hidden group">
+                                <div className="glass-ovni p-6 md:p-12 rounded-[3rem] md:rounded-[3.5rem] border border-[var(--theme-text)]/10 shadow-2xl relative overflow-hidden group">
                                     {/* Inner Glow */}
                                     <div className="absolute -top-24 -right-24 w-48 h-48 bg-[var(--theme-accent)]/10 blur-[60px] rounded-full pointer-events-none" />
 
@@ -181,27 +181,27 @@ export default function HypnoseProgress() {
                                         </div>
 
                                         <div className="flex-1">
-                                            <div className="inline-flex items-center gap-3 px-4 py-2 rounded-full border border-[var(--theme-accent)]/20 bg-[var(--theme-accent)]/5 text-[var(--theme-accent)] mb-6">
+                                            <div className="inline-flex items-center gap-2 md:gap-3 px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-[var(--theme-accent)]/20 bg-[var(--theme-accent)]/5 text-[var(--theme-accent)] mb-4 md:mb-6">
                                                 <span className="text-[10px] uppercase font-black tracking-widest">{checkpoints[activeStep].effect}</span>
                                             </div>
-                                            <h3 className="font-serif-display text-4xl md:text-6xl mb-6 text-[var(--theme-text)] leading-tight">
+                                            <h3 className="font-serif-display text-3xl md:text-5xl lg:text-6xl mb-4 md:mb-6 text-[var(--theme-text)] leading-tight">
                                                 {checkpoints[activeStep].title}
                                             </h3>
-                                            <p className="font-sans text-lg md:text-xl font-light text-[var(--theme-text)]/60 max-w-xl leading-relaxed">
+                                            <p className="font-sans text-base md:text-xl font-light text-[var(--theme-text)]/60 max-w-xl leading-relaxed">
                                                 {checkpoints[activeStep].description}
                                             </p>
                                         </div>
                                     </div>
 
                                     {/* Benefits with Staggered Reveal */}
-                                    <div className="mt-12 grid grid-cols-1 sm:grid-cols-3 gap-6 relative z-10">
+                                    <div className="mt-8 md:mt-12 grid grid-cols-1 sm:grid-cols-3 gap-3 md:gap-6 relative z-10">
                                         {checkpoints[activeStep].benefits.map((benefit, i) => (
                                             <motion.div
                                                 key={i}
                                                 initial={{ opacity: 0, y: 15 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 transition={{ delay: 0.3 + (i * 0.1) }}
-                                                className="group/benefit relative p-6 rounded-[2rem] bg-[var(--theme-bg)] border border-[var(--theme-text)]/10 hover:border-[var(--theme-accent)]/30 transition-all duration-500 overflow-hidden"
+                                                className="group/benefit relative p-4 md:p-6 rounded-2xl md:rounded-[2rem] bg-[var(--theme-bg)] border border-[var(--theme-text)]/10 hover:border-[var(--theme-accent)]/30 transition-all duration-500 overflow-hidden"
                                             >
                                                 {/* Card Background Glow */}
                                                 <div className="absolute inset-0 bg-gradient-to-br from-[var(--theme-accent)]/0 to-[var(--theme-accent)]/5 opacity-0 group-hover/benefit:opacity-100 transition-opacity duration-500" />
@@ -220,8 +220,8 @@ export default function HypnoseProgress() {
                         </AnimatePresence>
                     </div>
 
-                    {/* Scroll Prompt */}
-                    <div className="absolute bottom-6 right-[10%] lg:right-[15%] flex flex-col items-center gap-2 opacity-30 animate-bounce">
+                    {/* Scroll Prompt - Hidden on Mobile */}
+                    <div className="absolute bottom-6 right-[10%] lg:right-[15%] hidden md:flex flex-col items-center gap-2 opacity-30 animate-bounce">
                         <span className="text-[8px] uppercase tracking-widest font-bold">Continuez de défiler</span>
                         <ArrowDown className="w-4 h-4" />
                     </div>

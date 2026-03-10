@@ -64,7 +64,7 @@ export default function CarteCadeauClient() {
     };
 
     return (
-        <main className="min-h-screen text-[var(--theme-text)] pt-32 pb-24 relative overflow-hidden">
+        <main className="min-h-screen text-[var(--theme-text)] pt-32 pb-16 relative overflow-hidden">
             {/* Grain */}
             <div className="pointer-events-none fixed inset-0 z-50 h-full w-full opacity-[0.03] mix-blend-overlay"
                 style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")` }} />
@@ -99,7 +99,7 @@ export default function CarteCadeauClient() {
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: i * 0.1 + 0.2, duration: 0.6 }}
-                                    className={`relative w-full text-left p-6 rounded-[2rem] overflow-hidden flex items-start gap-5 border transition-all duration-400 ${isSelected
+                                    className={`relative w-full text-left p-6 rounded-[2rem] overflow-hidden flex items-start gap-5 border transition-all duration-400 ${!useCustomAmount && isSelected
                                         ? "bg-[var(--theme-accent)]/10 border-[var(--theme-accent)] shadow-xl shadow-[var(--theme-accent)]/15"
                                         : "border-[var(--theme-text)]/10 hover:border-[var(--theme-accent)]/30 bg-[var(--theme-text)]/4"
                                         }`}
@@ -118,7 +118,7 @@ export default function CarteCadeauClient() {
 
                                     {/* Text */}
                                     <div className="flex-1 min-w-0 pr-8">
-                                        <p className={`text-[10px] uppercase tracking-[0.2em] font-bold font-sans mb-1 transition-colors ${isSelected ? "text-[var(--theme-accent)]" : "text-[var(--theme-text)]/40"}`}>
+                                        <p className={`text-[10px] uppercase tracking-[0.2em] font-bold font-sans mb-1 transition-colors ${!useCustomAmount && isSelected ? "text-[var(--theme-accent)]" : "text-[var(--theme-text)]/40"}`}>
                                             {option.service} · {option.duration}
                                         </p>
                                         <h2 className="font-serif-display text-xl text-[var(--theme-text)] mb-1">{option.title}</h2>
@@ -127,10 +127,10 @@ export default function CarteCadeauClient() {
 
                                     {/* Price + check */}
                                     <div className="shrink-0 flex flex-col items-end gap-2 pt-1">
-                                        <p className={`font-serif-display text-2xl transition-colors ${isSelected ? "text-[var(--theme-accent)]" : "text-[var(--theme-text)]/60"}`}>
+                                        <p className={`font-serif-display text-2xl transition-colors ${!useCustomAmount && isSelected ? "text-[var(--theme-accent)]" : "text-[var(--theme-text)]/60"}`}>
                                             {option.price}
                                         </p>
-                                        {isSelected && (
+                                        {!useCustomAmount && isSelected && (
                                             <motion.div
                                                 initial={{ scale: 0 }}
                                                 animate={{ scale: 1 }}
@@ -182,7 +182,7 @@ export default function CarteCadeauClient() {
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: 0.5, duration: 0.7 }}
-                        className="glass-ovni p-8 rounded-[2.5rem] flex flex-col gap-6 sticky top-32"
+                        className="glass-ovni p-6 md:p-8 rounded-[2.5rem] flex flex-col gap-4 md:gap-6 sticky top-32"
                     >
                         {/* Summary */}
                         <div>

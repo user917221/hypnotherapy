@@ -43,10 +43,6 @@
   /* Mint accent */
 }
 
-.theme-soleil input::placeholder {
-  color: #66af9f !important;
-  opacity: 0.6;
-}
 
 .theme-nuit {
   /* THEME NUIT */
@@ -133,4 +129,33 @@ body {
 
 .text-glow-seafoam {
   text-shadow: 0 0 20px rgba(102, 175, 159, 0.4);
+}
+
+/* Base Input Glass Style */
+.input-glass {
+  background-color: color-mix(in srgb, var(--theme-text) 5%, transparent);
+  border-color: color-mix(in srgb, var(--theme-text) 10%, transparent);
+  color: var(--theme-text);
+}
+
+.input-glass:focus {
+  background-color: color-mix(in srgb, var(--theme-text) 10%, transparent);
+  border-color: color-mix(in srgb, var(--theme-accent) 30%, transparent);
+}
+
+.input-glass::placeholder {
+  color: color-mix(in srgb, var(--theme-text) 40%, transparent) !important;
+}
+
+/* Hide scrollbar utility */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+  /* Chrome, Safari and Opera */
 }

@@ -88,7 +88,7 @@ export default function RootLayout({
           <LocalBusinessSchema />
           <CustomCursor />
           <Preloader />
-          <div className="ovni-grain" />
+          <div className="ovni-grain hidden md:block" />
           <FloatingNavbar />
           <LemonSqueezyLoader />
           <Analytics />
