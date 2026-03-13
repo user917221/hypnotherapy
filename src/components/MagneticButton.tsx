@@ -48,13 +48,13 @@ export default function MagneticButton({
             className={`cursor-pointer ${fullWidth ? "w-full block" : "inline-block"}`}
         >
             {href ? (
-                <a href={href} className={innerClass}>{children}</a>
+                <a href={href} className={`${innerClass} focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-accent)] rounded-full`}>{children}</a>
             ) : (
                 <button
                     type={type}
                     onClick={onClick}
                     disabled={disabled}
-                    className={innerClass}
+                    className={`${innerClass} focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-accent)] rounded-full`}
                     style={fullWidth ? { width: "100%" } : {}}
                 >
                     {children}

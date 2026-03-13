@@ -1,10 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import MagneticButton from "@/components/MagneticButton";
-import gsap from "gsap";
+import { dashboardReviews } from "@/constants/reviews";
 
 export default function FeaturesDashboard() {
     return (
@@ -30,18 +30,13 @@ export default function FeaturesDashboard() {
 
 
 
-const reviews = [
-    { id: 1, name: "Antonella", text: "Me libérer de poids physique et émotionnel que je portais depuis trop longtemps.", stars: 5 },
-    { id: 2, name: "ChrysB", text: "Professionnelle douce, investie et surprenante par la justesse de son accompagnement.", stars: 5 },
-    { id: 3, name: "Paul", text: "Je prends à nouveau énormément plaisir à jouer, libéré de mes angoisses de performance.", stars: 5 },
-    { id: 4, name: "Laurie", text: "Je me sens enfin libérée de vieux poids, plus légère et ancrée.", stars: 5 }
-];
+const REVIEW_ROTATION_MS = 6000;
 
 function ReviewsShuffler() {
     const [index, setIndex] = useState(0);
 
     useEffect(() => {
-        const interval = setInterval(() => setIndex((prev) => (prev + 1) % reviews.length), 6000);
+        const interval = setInterval(() => setIndex((prev) => (prev + 1) % dashboardReviews.length), REVIEW_ROTATION_MS);
         return () => clearInterval(interval);
     }, []);
 
@@ -64,9 +59,9 @@ function ReviewsShuffler() {
                         ))}
                     </div>
                     <p className="font-serif-display italic text-3xl md:text-4xl text-[var(--theme-text)] mb-10 leading-[1.1]">
-                        "{reviews[index].text}"
+                        "{dashboardReviews[index].text}"
                     </p>
-                    <span className="font-sans font-bold text-xs text-[var(--theme-text)] uppercase tracking-[0.3em]">— {reviews[index].name}</span>
+                    <span className="font-sans font-bold text-xs text-[var(--theme-text)] uppercase tracking-[0.3em]">— {dashboardReviews[index].name}</span>
                 </motion.div>
             </AnimatePresence>
 
@@ -102,11 +97,11 @@ function BookingSelector() {
             <h3 className="font-serif-display italic text-5xl text-[var(--theme-text)] mb-10 leading-none">Se retrouver</h3>
 
             <div className="space-y-6 mb-10">
-                <div className="p-6 rounded-[2rem] bg-[var(--theme-text)]/5 border border-[var(--theme-text)]/10 flex flex-col gap-2 cursor-pointer hover:bg-[var(--theme-text)]/10 transition-all duration-500 scale-100 hover:scale-[1.05]">
+                <div className="p-6 rounded-[2rem] bg-[var(--theme-text)]/5 border border-[var(--theme-text)]/10 flex flex-col gap-2 hover:bg-[var(--theme-text)]/10 transition-all duration-500">
                     <span className="font-sans font-black text-[10px] text-[var(--theme-text)] uppercase tracking-[0.3em]">À Lannion</span>
                     <span className="font-sans text-sm text-[var(--theme-text)]/60 font-medium">1 bis Rue de la Madeleine</span>
                 </div>
-                <div className="p-6 rounded-[2rem] bg-[var(--theme-text)]/5 border border-[var(--theme-text)]/10 flex flex-col gap-2 cursor-pointer hover:bg-[var(--theme-text)]/10 transition-all duration-500 scale-100 hover:scale-[1.05]">
+                <div className="p-6 rounded-[2rem] bg-[var(--theme-text)]/5 border border-[var(--theme-text)]/10 flex flex-col gap-2 hover:bg-[var(--theme-text)]/10 transition-all duration-500">
                     <span className="font-sans font-black text-[10px] text-[var(--theme-text)] uppercase tracking-[0.3em]">En Visioconférence</span>
                     <span className="font-sans text-sm text-[var(--theme-text)]/60 font-medium">Partout dans le monde</span>
                 </div>

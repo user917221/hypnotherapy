@@ -3,7 +3,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useState, useRef } from "react";
-import { Headphones, Moon, Wind, Heart, Sparkles, Leaf, ArrowRight, Lock, Play, Shield, Target, Feather, ArrowDown, Zap, Coffee, BookOpen, Video } from "lucide-react";
+import { Headphones, ArrowRight, Lock, Play, ArrowDown } from "lucide-react";
 import MagneticButton from "@/components/MagneticButton";
 import MagneticPhoneButton from "@/components/MagneticPhoneButton";
 

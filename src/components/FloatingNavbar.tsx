@@ -193,7 +193,8 @@ function ThemeToggle({ themeIndex, setThemeIndex }: { themeIndex: number, setThe
             whileTap={{ scale: 1.25 }}
             transition={{ type: "spring", stiffness: 400, damping: 10 }}
             onClick={() => setThemeIndex((themeIndex + 1) % themes.length)}
-            className="relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-[var(--theme-accent)]/20 text-[var(--theme-accent)] transition-colors overflow-hidden shrink-0"
+            className="relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-[var(--theme-accent)]/20 text-[var(--theme-accent)] transition-colors overflow-hidden shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-accent)]"
+            aria-label={`Changer de thème (actuel : ${themes[themeIndex].id})`}
         >
             <AnimatePresence mode="popLayout" initial={false}>
                 <motion.div
@@ -275,12 +276,12 @@ function MobileDrawer({ onClose, themeIndex, setThemeIndex, pathname }: { onClos
             >
                 <div className="p-6 flex items-center justify-between border-b border-[var(--theme-accent)]/10">
                     <span className="font-sans font-black tracking-tighter text-lg uppercase text-[var(--theme-accent)]">Menu</span>
-                    <button onClick={onClose} className="p-2 rounded-full bg-[var(--theme-accent)]/10 text-[var(--theme-accent)]">
+                    <button onClick={onClose} className="p-2 rounded-full bg-[var(--theme-accent)]/10 text-[var(--theme-accent)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-accent)]" aria-label="Fermer le menu">
                         <X className="w-6 h-6" />
                     </button>
                 </div>
 
-                <div className="flex-1 overflow-y-auto p-6 space-y-8 no-scrollbar">
+                <div className="flex-1 overflow-y-auto p-6 space-y-8 hide-scrollbar">
                     {/* Main Links */}
                     <nav className="space-y-4">
                         {tabs.map((tab) => {

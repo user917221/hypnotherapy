@@ -5,6 +5,7 @@ import { motion, useMotionValue, useSpring } from "framer-motion";
 
 export default function CustomCursor() {
     const [isHovered, setIsHovered] = useState(false);
+    const [isTouch, setIsTouch] = useState(true);
 
     const cursorX = useMotionValue(-100);
     const cursorY = useMotionValue(-100);
@@ -14,11 +15,12 @@ export default function CustomCursor() {
     const smoothY = useSpring(cursorY, springConfig);
 
     useEffect(() => {
-        // Ne l'activer que sur desktop (pas de touch devices)
-        if (window.matchMedia("(pointer: coarse)").matches) return;
+        const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
+        setIsTouch(isTouchDevice);
+        if (isTouchDevice) return;
 
         const moveCursor = (e: MouseEvent) => {
-            cursorX.set(e.clientX - 16); // Centre le curseur de 32px (16px de rayon)
+            cursorX.set(e.clientX - 16);
             cursorY.set(e.clientY - 16);
         };
 
@@ -45,10 +47,7 @@ export default function CustomCursor() {
         };
     }, [cursorX, cursorY]);
 
-    // Si on est sur mobile/touch, on ne rend rien du tout
-    if (typeof window !== 'undefined' && window.matchMedia("(pointer: coarse)").matches) {
-        return null;
-    }
+    if (isTouch) return null;
 
     return (
         <motion.div

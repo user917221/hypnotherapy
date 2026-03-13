@@ -43,9 +43,11 @@ export default function HeroCinematic() {
             <div className="absolute inset-0 z-0">
                 <Image
                     src="/hero_bg.png"
-                    alt="Background"
+                    alt="Ambiance cabinet d'hypnothérapie Péguy Casteloot"
                     fill
                     priority
+                    placeholder="blur"
+                    blurDataURL="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1920 1080'%3E%3Crect fill='%2300483d' width='1920' height='1080'/%3E%3C/svg%3E"
                     className="hero-bg object-cover"
                     sizes="100vw"
                     quality={90}

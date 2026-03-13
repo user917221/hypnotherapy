@@ -10,12 +10,13 @@ import SmoothScroll from "@/components/SmoothScroll";
 import FloatingNavbar from "@/components/FloatingNavbar";
 import Preloader from "@/components/Preloader";
 import CustomCursor from "@/components/CustomCursor";
+import MobileCTA from "@/components/MobileCTA";
 import { Providers } from "@/components/Providers";
 
 const poppins = Poppins({
   variable: "--font-sans",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700"],
+  weight: ["300", "400", "500", "700", "900"],
 });
 
 const instrumentSerif = Instrument_Serif({
@@ -73,6 +74,14 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true, googleBot: { index: true, follow: true } },
 };
 
+const themeScript = `
+  try {
+    var idx = localStorage.getItem('theme-index');
+    if (idx === '1') document.documentElement.className = 'theme-soleil';
+    else if (idx === '2') document.documentElement.className = 'theme-nuit';
+  } catch(e) {}
+`;
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -80,16 +89,23 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body
         className={`${poppins.variable} ${instrumentSerif.variable} ${cormorant.variable} font-sans antialiased`}
       >
         <Providers>
+          <a href="#main-content" className="skip-link">
+            Aller au contenu principal
+          </a>
           <GoogleAnalytics ga_id={process.env.NEXT_PUBLIC_GA_ID || ""} />
           <LocalBusinessSchema />
           <CustomCursor />
           <Preloader />
           <div className="ovni-grain hidden md:block" />
           <FloatingNavbar />
+          <MobileCTA />
           <LemonSqueezyLoader />
           <Analytics />
           <SpeedInsights />

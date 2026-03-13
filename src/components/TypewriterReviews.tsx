@@ -3,41 +3,12 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 import { Star, ExternalLink } from "lucide-react";
+import { typewriterReviews } from "@/constants/reviews";
 
 const MAPS_URL = "https://maps.app.goo.gl/p7tx93TzHm6GVheE6";
-
-const reviews = [
-    {
-        author: "Antonella M.",
-        text: "Grâce à l'hypnose j'ai pu me retrouver, me libérer de poids autant physique qu'émotionnel. Péguy est une thérapeute exceptionnelle, bienveillante et à l'écoute.",
-        stars: 5,
-    },
-    {
-        author: "ChrysB",
-        text: "Péguy est une professionnelle douce, investie et surprenante. Sa maîtrise de l'hypnose et de la sophrologie m'a permis de me libérer de blocages que je trainais depuis des années. Je revis pleinement.",
-        stars: 5,
-    },
-    {
-        author: "Laurie",
-        text: "Je me sens enfin libérée de vieux poids, en profondeur. Je dors mieux, je suis apaisée. Péguy a su créer un espace de confiance absolue dès la première séance.",
-        stars: 5,
-    },
-    {
-        author: "Marie-Claire D.",
-        text: "J'avais des réserves sur l'hypnose avant de consulter Péguy. Après deux séances, mes insomnies chroniques ont quasiment disparu. Un travail profond et doux à la fois.",
-        stars: 5,
-    },
-    {
-        author: "Thomas R.",
-        text: "Arrêt du tabac en une seule séance. Ça fait maintenant 8 mois, toujours aucune envie. Je recommande à tous ceux qui cherchent à arrêter sans souffrir.",
-        stars: 5,
-    },
-    {
-        author: "Sandrine L.",
-        text: "Programme IG Bas + hypnose = une combinaison redoutable. J'ai perdu 11 kg en 4 mois sans me priver, sans compter les calories. Et l'hypnose a traité ce que le régime n'aurait jamais pu toucher.",
-        stars: 5,
-    },
-];
+const TYPING_SPEED_MS = 28;
+const DELETING_SPEED_MS = 12;
+const PAUSE_AFTER_TYPING_MS = 5000;
 
 export default function TypewriterReviews() {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -45,28 +16,25 @@ export default function TypewriterReviews() {
     const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
-        const currentReview = reviews[currentIndex].text;
-        const typingSpeed = 28;
-        const deletingSpeed = 12;
-        const pauseTime = 5000;
+        const currentReview = typewriterReviews[currentIndex].text;
 
         let timer: NodeJS.Timeout;
 
         if (!isDeleting && displayedText !== currentReview) {
             timer = setTimeout(() => {
                 setDisplayedText(currentReview.substring(0, displayedText.length + 1));
-            }, typingSpeed);
+            }, TYPING_SPEED_MS);
         } else if (!isDeleting && displayedText === currentReview) {
             timer = setTimeout(() => {
                 setIsDeleting(true);
-            }, pauseTime);
+            }, PAUSE_AFTER_TYPING_MS);
         } else if (isDeleting && displayedText !== "") {
             timer = setTimeout(() => {
                 setDisplayedText(currentReview.substring(0, displayedText.length - 1));
-            }, deletingSpeed);
+            }, DELETING_SPEED_MS);
         } else if (isDeleting && displayedText === "") {
             setIsDeleting(false);
-            setCurrentIndex((prev) => (prev + 1) % reviews.length);
+            setCurrentIndex((prev) => (prev + 1) % typewriterReviews.length);
         }
 
         return () => clearTimeout(timer);
@@ -123,12 +91,12 @@ export default function TypewriterReviews() {
                             className="mt-10 flex flex-col items-center gap-3"
                         >
                             <div className="flex gap-1">
-                                {[...Array(reviews[currentIndex].stars)].map((_, i) => (
+                                {[...Array(typewriterReviews[currentIndex].stars)].map((_, i) => (
                                     <Star key={i} className="w-4 h-4 fill-[var(--theme-accent)] text-[var(--theme-accent)]" />
                                 ))}
                             </div>
                             <p className="text-[var(--theme-text)]/40 font-sans tracking-[0.2em] uppercase text-xs font-bold">
-                                — {reviews[currentIndex].author} —
+                                — {typewriterReviews[currentIndex].author} —
                             </p>
                             <span className="inline-flex items-center gap-1.5 text-[10px] font-sans text-[var(--theme-text)]/25 group-hover:text-[var(--theme-accent)]/60 transition-colors tracking-widest uppercase">
                                 Voir sur Google Maps <ExternalLink className="w-3 h-3" />
@@ -139,12 +107,15 @@ export default function TypewriterReviews() {
             </a>
 
             {/* Dots navigation */}
-            <div className="flex justify-center gap-2 mt-14">
-                {reviews.map((_, i) => (
+            <div className="flex justify-center gap-2 mt-14" role="tablist" aria-label="Navigation des avis">
+                {typewriterReviews.map((review, i) => (
                     <button
                         key={i}
+                        role="tab"
+                        aria-selected={i === currentIndex}
+                        aria-label={`Avis de ${review.author}`}
                         onClick={() => { setCurrentIndex(i); setDisplayedText(""); setIsDeleting(false); }}
-                        className={`rounded-full transition-all duration-500 ${i === currentIndex
+                        className={`rounded-full transition-all duration-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--theme-accent)] ${i === currentIndex
                             ? "w-6 h-2 bg-[var(--theme-accent)]"
                             : "w-2 h-2 bg-[var(--theme-text)]/15 hover:bg-[var(--theme-text)]/35"
                             }`}

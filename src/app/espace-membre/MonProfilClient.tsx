@@ -7,7 +7,6 @@ import {
     Calendar,
     ShoppingBag,
     BarChart2,
-    Play,
     ChevronRight,
     LogOut,
     Clock,
@@ -17,7 +16,6 @@ import {
     ArrowRight,
     Users,
     TrendingUp,
-    BarChart3,
     Activity,
     Plus,
     Trash2,
@@ -33,76 +31,26 @@ import MagneticButton from "@/components/MagneticButton";
 import MagneticPhoneButton from "@/components/MagneticPhoneButton";
 import AudioPlayerCustom from "@/components/AudioPlayerCustom";
 import { audioProducts } from "@/constants/products";
+import { createClient } from "@/utils/supabase/client";
 
-const ADMIN_EMAIL = "coco.lequillec@gmail.com";
+const ADMIN_EMAIL = "contact@peguycasteloot.fr";
 
-// Mock data pour la structure (Sera remplacé par des appels API/Supabase)
-const mockUser = {
-    prenom: "Péguy",
-    nom: "Casteloot",
-    genre: "femme",
-    email: "contact@peguycasteloot.fr"
-};
+interface Purchase {
+    id: string;
+    variant_id: string;
+    order_id: string;
+    status: string;
+    amount: string;
+    created_at: string;
+}
 
-const mockOrders = [
-    { id: "1", produit: "Box Sommeil Profond", prix: 59, date: "08/03/2026", audioUrl: "/audios/sommeil-sample.wav" },
-    { id: "2", produit: "MINDSET ZEN", prix: 147, date: "10/03/2026", audioUrl: "/audios/stress-sample.mp3" },
-    { id: "3", produit: "Ton corps, ton allié silencieux", prix: 57, date: "11/03/2026", audioUrl: "/audios/sommeil-sample.wav" },
-    { id: "4", produit: "Équilibre Sacré", prix: 127, date: "12/03/2026", audioUrl: "/audios/stress-sample.mp3" }
-];
-
-const podiaProducts = [
-    {
-        id: "sommeil-endormissement",
-        title: "Box Sommeil & Endormissement",
-        description: "Hypnose et Sophrologie pour retrouver un endormissement naturel. 4 fichiers.",
-        price: 59,
-        image: "https://images.unsplash.com/photo-1511295742362-92c96b124e52?q=80&w=800&auto=format&fit=crop",
-        url: "#"
-    },
-    {
-        id: "sommeil-profond",
-        title: "Box Sommeil Profond",
-        description: "Retrouver des nuits réparatrices avec l'hypnose et la sophrologie. 4 fichiers.",
-        price: 59,
-        image: "https://images.unsplash.com/photo-1516008434673-83a372e9d298?q=80&w=800&auto=format&fit=crop",
-        url: "#"
-    },
-    {
-        id: "sommeil-agite",
-        title: "Box Sommeil – Nuits agitées",
-        description: "Pacifier les nuits agitées avec l'hypnose et la sophrologie. 3 fichiers.",
-        price: 59,
-        image: "https://images.unsplash.com/photo-1542459993-85e783ab5657?q=80&w=800&auto=format&fit=crop",
-        url: "#"
-    },
-    {
-        id: "sommeil-rythme",
-        title: "Box pour recaler son sommeil",
-        description: "Hypnose et sophrologie pour retrouver un rythme naturel. 4 fichiers.",
-        price: 59,
-        image: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?q=80&w=800&auto=format&fit=crop",
-        url: "#"
-    },
-    {
-        id: "sommeil-reveils",
-        title: "Box réveils nocturnes",
-        description: "Hypnose et sophrologie pour se rendormir facilement. 2 fichiers.",
-        price: 59,
-        image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=800&auto=format&fit=crop",
-        url: "#"
-    },
-    {
-        id: "sommeil-rituel",
-        title: "Rituel du soir",
-        description: "Préparer un sommeil réparateur. 1 leçon.",
-        price: 17,
-        image: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?q=80&w=800&auto=format&fit=crop",
-        url: "#"
-    }
-];
-
-const mockRdv: any[] = []; // Simule un compte sans RDV
+interface Appointment {
+    id: string;
+    event_name: string;
+    start_time: string;
+    end_time: string;
+    status: string;
+}
 
 // Textes dynamiques pour le suivi des séances
 const getSuiviMessage = (seanceCount: number) => {
@@ -127,34 +75,28 @@ export default function MonProfilClient() {
     const router = useRouter();
     const [activeTab, setActiveTab] = useState<"audios" | "rdv" | "suivi" | "boutique" | "analytics" | "performance" | "content">("audios");
     const [playingAudio, setPlayingAudio] = useState<string | null>(null);
-    const [selectedOffers, setSelectedOffers] = useState<string[]>([]);
     const [audioTimes, setAudioTimes] = useState<Record<string, number>>({});
     const [isMounted, setIsMounted] = useState(false);
-
-    // State pour nos toasts
     const [toastMessage, setToastMessage] = useState<string | null>(null);
-
-    // State pour la gestion des audios (CMS Admin)
     const [managedAudios, setManagedAudios] = useState(audioProducts);
-
-    // State pour le panel Analytics (Jour/Mois/Hebdo)
     const [analyticsRange, setAnalyticsRange] = useState<"daily" | "weekly" | "monthly">("monthly");
 
-    // Simuler le nombre de séances pour la démonstration (0 par défaut)
-    const [completedSessions, setCompletedSessions] = useState(0);
+    const [purchases, setPurchases] = useState<Purchase[]>([]);
+    const [appointments, setAppointments] = useState<Appointment[]>([]);
+    const [dataLoading, setDataLoading] = useState(true);
+
+    const completedSessions = appointments.filter(a => a.status !== "canceled").length;
 
     useEffect(() => {
         setIsMounted(true);
     }, []);
 
-    // Redirect if not authenticated
     useEffect(() => {
         if (isMounted && status === "unauthenticated") {
             router.push("/connexion");
         }
     }, [isMounted, status, router]);
 
-    // Charger la progression au démarrage
     useEffect(() => {
         const userId = (session?.user as any)?.id;
         if (userId) {
@@ -162,6 +104,47 @@ export default function MonProfilClient() {
             if (saved) setAudioTimes(JSON.parse(saved));
         }
     }, [session?.user]);
+
+    useEffect(() => {
+        async function fetchData() {
+            if (status !== "authenticated" || !session?.user?.email) return;
+            setDataLoading(true);
+
+            try {
+                const supabase = createClient();
+
+                const { data: profile } = await supabase
+                    .from("profiles")
+                    .select("id")
+                    .eq("email", session.user.email)
+                    .single();
+
+                if (profile) {
+                    const [purchasesResult, appointmentsResult] = await Promise.all([
+                        supabase
+                            .from("purchases")
+                            .select("*")
+                            .eq("user_id", profile.id)
+                            .order("created_at", { ascending: false }),
+                        supabase
+                            .from("appointments")
+                            .select("*")
+                            .eq("user_id", profile.id)
+                            .order("start_time", { ascending: false }),
+                    ]);
+
+                    if (purchasesResult.data) setPurchases(purchasesResult.data);
+                    if (appointmentsResult.data) setAppointments(appointmentsResult.data);
+                }
+            } catch (err) {
+                console.error("Failed to fetch member data:", err);
+            } finally {
+                setDataLoading(false);
+            }
+        }
+
+        fetchData();
+    }, [status, session?.user?.email]);
 
     const showToast = (msg: string) => {
         setToastMessage(msg);
@@ -524,20 +507,6 @@ export default function MonProfilClient() {
                             <div className="flex flex-col gap-8 max-w-4xl">
                                 {(() => {
                                     const isAdmin = session?.user?.email === ADMIN_EMAIL;
-                                    const displayedOrders = isAdmin
-                                        ? [
-                                            ...mockOrders,
-                                            ...audioProducts
-                                                .filter(p => !mockOrders.some(o => o.produit === p.title))
-                                                .map(p => ({
-                                                    id: p.id,
-                                                    produit: p.title,
-                                                    prix: p.price,
-                                                    date: "Accès Admin",
-                                                    audioUrl: p.audioUrl || "/audios/stress-sample.mp3"
-                                                }))
-                                        ]
-                                        : mockOrders;
 
                                     if (isAdmin) {
                                         return (
@@ -547,143 +516,135 @@ export default function MonProfilClient() {
                                                         <Unlock className="w-6 h-6" />
                                                         <div>
                                                             <h3 className="font-serif-display text-xl uppercase tracking-wider">Mode Admin Actif</h3>
-                                                            <p className="text-xs font-sans opacity-70">Tous les audios de la bibliothèque ont été débloqués pour votre compte.</p>
+                                                            <p className="text-xs font-sans opacity-70">Tous les audios de la bibliothèque sont débloqués.</p>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                {displayedOrders.map((order) => (
+                                                {audioProducts.map((product) => (
                                                     <AudioPlayerCustom
-                                                        key={order.id}
-                                                        src={order.audioUrl}
-                                                        title={order.produit}
-                                                        description={order.id.includes('demo') ? "Version de démonstration admin." : `Débloqué le ${order.date}. Profitez de votre séance.`}
+                                                        key={product.id}
+                                                        src={product.audioUrl || "/audios/stress-sample.mp3"}
+                                                        title={product.title}
+                                                        description={`${product.tag} · ${product.duration}`}
                                                     />
                                                 ))}
                                             </>
                                         );
                                     }
 
-                                    return displayedOrders.length > 0 ? (
-                                        displayedOrders.map((order) => (
+                                    if (dataLoading) {
+                                        return (
+                                            <div className="py-20 text-center">
+                                                <div className="w-12 h-12 mx-auto rounded-full border-2 border-[var(--theme-accent)]/20 border-t-[var(--theme-accent)] animate-spin mb-6" />
+                                                <p className="font-sans text-[var(--theme-text)]/40">Chargement de vos audios...</p>
+                                            </div>
+                                        );
+                                    }
+
+                                    if (purchases.length === 0) {
+                                        return (
+                                            <div className="col-span-full py-20 text-center glass-ovni rounded-[3rem] border border-dashed border-[var(--theme-text)]/10">
+                                                <ShoppingBag className="w-12 h-12 mx-auto mb-6 text-[var(--theme-text)]/20" />
+                                                <p className="font-sans text-[var(--theme-text)]/40 mb-8">Vous n&apos;avez pas encore d&apos;audios dans votre bibliothèque.</p>
+                                                <Link href="/voyage-auditif">
+                                                    <MagneticButton className="px-8 py-4 bg-[var(--theme-accent)] text-[var(--theme-bg)] rounded-full text-[10px] uppercase font-black tracking-widest">
+                                                        Explorer la boutique
+                                                    </MagneticButton>
+                                                </Link>
+                                            </div>
+                                        );
+                                    }
+
+                                    return purchases.map((purchase) => {
+                                        const product = audioProducts.find(p => p.id === purchase.variant_id);
+                                        return (
                                             <AudioPlayerCustom
-                                                key={order.id}
-                                                src={order.audioUrl}
-                                                title={order.produit}
-                                                description={`Débloqué le ${order.date}. Profitez de votre séance d'hypnose guidée.`}
+                                                key={purchase.id}
+                                                src={product?.audioUrl || "/audios/stress-sample.mp3"}
+                                                title={product?.title || `Audio #${purchase.variant_id}`}
+                                                description={`Acheté le ${new Date(purchase.created_at).toLocaleDateString("fr-FR")} · ${purchase.amount || ""}`}
                                             />
-                                        ))
-                                    ) : (
-                                        <div className="col-span-full py-20 text-center glass-ovni rounded-[3rem] border border-dashed border-[var(--theme-text)]/10">
-                                            <ShoppingBag className="w-12 h-12 mx-auto mb-6 text-[var(--theme-text)]/20" />
-                                            <p className="font-sans text-[var(--theme-text)]/40 mb-8">Vous n&apos;avez pas encore d&apos;audios dans votre bibliothèque.</p>
-                                            <Link href="/voyage-auditif">
-                                                <MagneticButton className="px-8 py-4 bg-[var(--theme-accent)] text-[var(--theme-bg)] rounded-full text-[10px] uppercase font-black tracking-widest">
-                                                    Explorer la boutique
-                                                </MagneticButton>
-                                            </Link>
-                                        </div>
-                                    );
+                                        );
+                                    });
                                 })()}
                             </div>
                         )}
 
-                        {/* TAB: BOUTIQUE (PODIA OFFERS) */}
                         {activeTab === "boutique" && (
                             <div className="space-y-12">
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    {podiaProducts.map((product) => (
+                                    {audioProducts.map((product) => (
                                         <div
                                             key={product.id}
-                                            onClick={() => {
-                                                setSelectedOffers(prev =>
-                                                    prev.includes(product.id)
-                                                        ? prev.filter(id => id !== product.id)
-                                                        : [...prev, product.id]
-                                                );
-                                            }}
-                                            className={`glass-ovni rounded-[2.5rem] overflow-hidden border transition-all cursor-pointer group ${selectedOffers.includes(product.id)
-                                                ? "border-[var(--theme-accent)] ring-2 ring-[var(--theme-accent)]/20 shadow-xl shadow-[var(--theme-accent)]/10"
-                                                : "border-[var(--theme-text)]/5 hover:border-[var(--theme-accent)]/30"
-                                                }`}
+                                            className="glass-ovni rounded-[2.5rem] overflow-hidden border border-[var(--theme-text)]/5 hover:border-[var(--theme-accent)]/30 transition-all group"
                                         >
-                                            <div className="h-48 relative overflow-hidden">
-                                                <img src={product.image} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt={product.title} />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-[var(--theme-bg)] via-transparent to-transparent opacity-60" />
-                                                <div className="absolute top-4 right-4 px-3 py-1 rounded-full bg-[var(--theme-accent)] text-[var(--theme-bg)] text-[10px] font-black uppercase tracking-widest">
-                                                    {product.price} €
-                                                </div>
-                                                {selectedOffers.includes(product.id) && (
-                                                    <div className="absolute top-4 left-4 w-8 h-8 rounded-full bg-[var(--theme-accent)] flex items-center justify-center text-[var(--theme-bg)] z-10">
-                                                        <CheckCircle2 className="w-5 h-5" />
-                                                    </div>
-                                                )}
-                                            </div>
                                             <div className="p-8">
+                                                <div className="flex items-center justify-between mb-6">
+                                                    <div className="w-14 h-14 rounded-2xl flex items-center justify-center border border-[var(--theme-text)]/10"
+                                                        style={{ background: `${product.color}15`, color: product.color }}>
+                                                        {product.icon}
+                                                    </div>
+                                                    <div className="flex items-center gap-2">
+                                                        {product.highlight && (
+                                                            <span className="px-3 py-1 rounded-full bg-[var(--theme-accent)] text-[var(--theme-bg)] text-[10px] font-black tracking-widest uppercase">
+                                                                Populaire
+                                                            </span>
+                                                        )}
+                                                        <span className="px-3 py-1 rounded-full bg-[var(--theme-text)]/5 text-[10px] font-black uppercase tracking-widest">
+                                                            {product.price} €
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <span className="text-[10px] uppercase tracking-[0.2em] font-bold text-[var(--theme-text)]/30 mb-2 block">{product.tag}</span>
                                                 <h3 className="font-serif-display text-2xl mb-2">{product.title}</h3>
                                                 <p className="font-sans text-xs text-[var(--theme-text)]/40 font-light leading-relaxed mb-6">
                                                     {product.description}
                                                 </p>
-                                                <div className="flex items-center justify-between">
-                                                    <span className={`text-[10px] uppercase font-bold tracking-widest transition-colors ${selectedOffers.includes(product.id) ? "text-[var(--theme-accent)]" : "text-[var(--theme-text)]/20"}`}>
-                                                        {selectedOffers.includes(product.id) ? "Sélectionné" : "Ajouter au pack"}
-                                                    </span>
-                                                    <ChevronRight className={`w-4 h-4 transition-transform ${selectedOffers.includes(product.id) ? "text-[var(--theme-accent)] rotate-90" : "text-[var(--theme-text)]/20"}`} />
-                                                </div>
+                                                {product.checkoutUrl && (
+                                                    <a
+                                                        href={product.checkoutUrl}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="w-full flex items-center justify-center gap-2 py-4 rounded-full bg-[var(--theme-accent)]/10 text-[var(--theme-accent)] text-[10px] font-black uppercase tracking-widest hover:bg-[var(--theme-accent)] hover:text-[var(--theme-bg)] transition-all"
+                                                    >
+                                                        Acheter <ArrowRight className="w-3 h-3" />
+                                                    </a>
+                                                )}
                                             </div>
                                         </div>
                                     ))}
                                 </div>
-
-                                {/* Checkout Bar */}
-                                <AnimatePresence>
-                                    {selectedOffers.length > 0 && (
-                                        <motion.div
-                                            initial={{ opacity: 0, y: 100 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            exit={{ opacity: 0, y: 100 }}
-                                            className="fixed bottom-8 left-1/2 -translate-x-1/2 w-full max-w-2xl px-6 z-50"
-                                        >
-                                            <div className="glass-ovni p-6 rounded-[2rem] border border-[var(--theme-accent)]/30 shadow-2xl shadow-black/50 flex items-center justify-between gap-8 backdrop-blur-2xl">
-                                                <div>
-                                                    <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-[var(--theme-accent)] mb-1">Votre Sélection</p>
-                                                    <h4 className="font-serif-display text-xl">{selectedOffers.length} {selectedOffers.length > 1 ? "articles" : "article"} · {selectedOffers.reduce((acc, id) => acc + (podiaProducts.find(p => p.id === id)?.price || 0), 0)} €</h4>
-                                                </div>
-                                                <button
-                                                    onClick={() => {
-                                                        alert("Redirection vers le système de paiement sécurisé local en cours de configuration...");
-                                                    }}
-                                                    className="px-8 py-4 bg-[var(--theme-accent)] text-[var(--theme-bg)] rounded-2xl font-sans text-[11px] uppercase font-black tracking-widest hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center gap-3"
-                                                >
-                                                    Finaliser ma commande <ArrowRight className="w-4 h-4" />
-                                                </button>
-                                            </div>
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
                             </div>
                         )}
                         {activeTab === "rdv" && (
                             <div className="space-y-4 max-w-4xl">
-                                {mockRdv.length > 0 ? (
-                                    mockRdv.map((rdv) => (
+                                {dataLoading ? (
+                                    <div className="py-20 text-center">
+                                        <div className="w-12 h-12 mx-auto rounded-full border-2 border-[var(--theme-accent)]/20 border-t-[var(--theme-accent)] animate-spin mb-6" />
+                                        <p className="font-sans text-[var(--theme-text)]/40">Chargement de vos rendez-vous...</p>
+                                    </div>
+                                ) : appointments.length > 0 ? (
+                                    appointments.map((rdv) => (
                                         <div key={rdv.id} className="glass-ovni p-8 rounded-3xl border border-[var(--theme-text)]/10 flex flex-col sm:flex-row justify-between items-center gap-6">
                                             <div className="flex items-center gap-6">
-                                                <div className="w-12 h-12 rounded-2xl bg-seafoam/10 flex items-center justify-center text-seafoam">
+                                                <div className="w-12 h-12 rounded-2xl bg-[var(--theme-accent)]/10 flex items-center justify-center text-[var(--theme-accent)]">
                                                     <Calendar className="w-6 h-6" />
                                                 </div>
                                                 <div>
-                                                    <h3 className="font-serif-display text-xl mb-1">{rdv.service}</h3>
-                                                    <p className="font-sans text-sm text-[var(--theme-text)]/50">{rdv.date}</p>
+                                                    <h3 className="font-serif-display text-xl mb-1">{rdv.event_name}</h3>
+                                                    <p className="font-sans text-sm text-[var(--theme-text)]/50">
+                                                        {new Date(rdv.start_time).toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}
+                                                        {" · "}
+                                                        {new Date(rdv.start_time).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
+                                                    </p>
                                                 </div>
                                             </div>
-                                            <div className="flex items-center gap-4">
-                                                <span className="px-4 py-2 rounded-full bg-green-500/10 text-green-400 text-[10px] uppercase font-black tracking-widest flex items-center gap-2">
-                                                    <CheckCircle2 className="w-3 h-3" /> {rdv.statut}
-                                                </span>
-                                                <button className="text-[var(--theme-text)]/30 hover:text-[var(--theme-text)] transition-colors">
-                                                    <ChevronRight className="w-5 h-5" />
-                                                </button>
-                                            </div>
+                                            <span className={`px-4 py-2 rounded-full text-[10px] uppercase font-black tracking-widest flex items-center gap-2 ${rdv.status === "canceled"
+                                                ? "bg-red-500/10 text-red-400"
+                                                : "bg-green-500/10 text-green-400"
+                                                }`}>
+                                                <CheckCircle2 className="w-3 h-3" /> {rdv.status === "canceled" ? "Annulé" : "Confirmé"}
+                                            </span>
                                         </div>
                                     ))
                                 ) : (
